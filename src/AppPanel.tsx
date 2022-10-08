@@ -71,6 +71,7 @@ export function ResizeSeparator(props: {
   direction: PanelDirection;
 }) {
   const [lastMousePos, setLastMousePos] = useState<[number, number]>([0, 0]);
+
   useEffect(() => {
     const mousemove = (e: MouseEvent) => {
       if (isMouseDown) {
@@ -119,6 +120,55 @@ export function ResizeSeparator(props: {
   );
 }
 
+
+
+function AddPanelGrid(props: {
+  onExit: () => void
+  onAddPanel: (direction: PanelDirection, positive: boolean) => void
+}) {
+  return <div 
+    onMouseLeave={props.onExit}
+  className="add-panel-container">
+    <button
+      onClick={() => props.onAddPanel(PanelDirection.VERTICAL, false)}
+      style={{
+        gridColumnStart: 2,
+        gridColumnEnd: 3
+      }}
+    >Add Above</button>
+    <button
+      onClick={() => props.onAddPanel(PanelDirection.HORIZONTAL, false)}
+      style={{
+        gridColumnStart: 1,
+        gridColumnEnd: 2,
+        gridRowStart: 2,
+        gridRowEnd: 3,
+      }}
+    >Add Left</button>
+    <button
+      onClick={() => props.onAddPanel(PanelDirection.HORIZONTAL, true)}
+      style={{
+        gridColumnStart: 3,
+        gridColumnEnd: 4,
+        gridRowStart: 2,
+        gridRowEnd: 3,
+      }}
+      >Add Right</button>
+    <button
+      onClick={() => props.onAddPanel(PanelDirection.VERTICAL, true)}
+      style={{
+        gridColumnStart: 2,
+        gridColumnEnd: 3,
+        gridRowStart: 3,
+        gridRowEnd: 4,
+      }}
+    >Add Below</button>
+  </div>
+}
+
+
+
+
 export function AppPanel(props: {
   data: Panel;
   setData: (p: Panel) => void;
@@ -127,12 +177,20 @@ export function AppPanel(props: {
   direction: PanelDirection;
   onResize: (delta: number) => void;
   onDelete?: () => void;
+  lastChild?: boolean;
+  onAddPanel?: (positive: boolean) => void
 }) {
   
+  const [isAdding, setIsAdding] = useState(false);
+
+  useEffect(() => {
+    if (props.data.type != PanelType.MULTIPLE) return;
+    if (props.data.children.length == 0 && props.onDelete) props.onDelete();
+  });
+
   let inner;
   const parentRef = React.createRef<HTMLDivElement>();
   if (props.data.type == PanelType.MULTIPLE) {
-    if (props.data.children.length == 0 && props.onDelete) props.onDelete();
     inner = (
       <div
         style={{
@@ -188,7 +246,34 @@ export function AppPanel(props: {
                     ),
                   });
                 }}
+
                 direction={props.data.direction}
+
+                lastChild={i == props.data.children.length - 1}
+
+                onAddPanel={positive => {
+                  if (props.data.type != PanelType.MULTIPLE) return undefined;
+                  let newChildren = [...props.data.children];
+                  let newSize = panel.size / 2;
+                  newChildren[i].size = newSize;
+                  if (positive) {
+                    newChildren.splice(i + 1, 0, {
+                      type: PanelType.UNDECIDED,
+                      size: newSize,
+                      key: makeKey()
+                    });
+                  } else {
+                    newChildren.splice(i, 0, {
+                      type: PanelType.UNDECIDED,
+                      size: newSize,
+                      key: makeKey()
+                    });
+                  }
+                  props.setData({
+                    ...props.data,
+                    children: newChildren
+                  })
+                }}
               ></AppPanel>
             </React.Fragment>
           );
@@ -214,6 +299,7 @@ export function AppPanel(props: {
   }
 
 
+
   return (
     <div
       style={{
@@ -223,32 +309,59 @@ export function AppPanel(props: {
           props.direction == PanelDirection.VERTICAL ? "column" : "row",
       }}
     >
-      <div
-        style={{
-          ...props.outerStyle,
-          flexGrow: 1
-        }}
-        ref={parentRef}
-        className={
-          props.data.type == PanelType.MULTIPLE
-            ? "app-panel-multiple app-panel"
-            : "app-panel"
-        }
-      >
-        {props.data.type == PanelType.MULTIPLE ? undefined : (
-          <div>
-            {props.onDelete ? <button onClick={props.onDelete} className="close-panel-button"><IoClose></IoClose></button> : undefined}
-            <button className="add-panel-button"><IoAdd></IoAdd></button>
-          </div>
-        )}
-        {inner}
-      </div>
-      <ResizeSeparator
+      {
+        isAdding ?
+        <AddPanelGrid
+          onExit={() => setIsAdding(false)}
+          onAddPanel={(direction, positive) => {
+            setIsAdding(false);
+            if (props.onAddPanel) {
+              if (direction == props.direction) {
+                props.onAddPanel(positive);
+              } else {
+                const oldPanel = { ...props.data, size: props.data.size / 2 };
+                const newPanel: Panel = { type: PanelType.UNDECIDED, key: makeKey(), size: props.data.size / 2 };
+                props.setData({
+                  type: PanelType.MULTIPLE,
+                  size: props.data.size,
+                  key: makeKey(),
+                  direction: (props.direction == PanelDirection.VERTICAL) ? PanelDirection.HORIZONTAL : PanelDirection.VERTICAL,
+                  children: positive ? [oldPanel, newPanel] : [newPanel, oldPanel] 
+                })
+              }
+            }
+          }}
+        ></AddPanelGrid>
+        :
+        <div
+          style={{
+            ...props.outerStyle,
+            flexGrow: 1
+          }}
+          ref={parentRef}
+          className={
+            props.data.type == PanelType.MULTIPLE
+              ? "app-panel-multiple app-panel"
+              : "app-panel"
+          }
+        >
+          {props.data.type == PanelType.MULTIPLE ? undefined : (
+            <div>
+              {props.onDelete ? <button onClick={props.onDelete} className="close-panel-button"><IoClose></IoClose></button> : undefined}
+              <button onClick={() => {
+                setIsAdding(true);
+              }} className="add-panel-button"><IoAdd></IoAdd></button>
+            </div>
+          )}
+          {inner}
+        </div>
+      }
+      {props.lastChild ? undefined : <ResizeSeparator
         onMove={(delta) => {
           props.onResize(delta);
         }}
         direction={props.direction}
-      ></ResizeSeparator>
+      ></ResizeSeparator> }
     </div>
   );
 }

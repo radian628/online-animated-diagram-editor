@@ -26,7 +26,7 @@
 }
 
 .close-panel-button svg {
-  margin-left: -5.5px;
+  margin-left: -5px;
 }
 
 .close-panel-button:hover {
@@ -46,11 +46,21 @@
 }
 
 .add-panel-button svg {
-  margin-left: -5.5px;
+  margin-left: -5px;
 }
 
 .add-panel-button:hover {
   background: rgb(69, 188, 69);
+}
+
+.add-panel-container {
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
+  background: #dddddd;
+  border-radius: 10px;
+  height: 100%;
+  width: 100%;
 }
 
 
