@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { IoAdd, IoClose } from "react-icons/io5";
 
 export enum PanelDirection {
   HORIZONTAL,
@@ -125,10 +126,13 @@ export function AppPanel(props: {
   outerStyle?: React.CSSProperties;
   direction: PanelDirection;
   onResize: (delta: number) => void;
+  onDelete?: () => void;
 }) {
+  
   let inner;
   const parentRef = React.createRef<HTMLDivElement>();
   if (props.data.type == PanelType.MULTIPLE) {
+    if (props.data.children.length == 0 && props.onDelete) props.onDelete();
     inner = (
       <div
         style={{
@@ -150,6 +154,14 @@ export function AppPanel(props: {
           return (
             <React.Fragment key={panel.key}>
               <AppPanel
+
+                onDelete={() => {
+                  if (props.data.type != PanelType.MULTIPLE) return undefined;
+                  props.setData({
+                    ...props.data,
+                    children: props.data.children.filter((c, j) => j != i)
+                  });
+                }}
               
                 onResize={(delta) => {
                   if (props.data.type != PanelType.MULTIPLE) return undefined;
@@ -225,7 +237,8 @@ export function AppPanel(props: {
       >
         {props.data.type == PanelType.MULTIPLE ? undefined : (
           <div>
-            <button className="close-panel-button">X</button>
+            {props.onDelete ? <button onClick={props.onDelete} className="close-panel-button"><IoClose></IoClose></button> : undefined}
+            <button className="add-panel-button"><IoAdd></IoAdd></button>
           </div>
         )}
         {inner}

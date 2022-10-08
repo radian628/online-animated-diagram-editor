@@ -28,8 +28,17 @@ function App() {
         type: PanelType.MULTIPLE,
         direction: PanelDirection.VERTICAL,
         children: [
-          { type: PanelType.CODE_EDITOR, key: "1", size: 150  },
-          { type: PanelType.CODE_EDITOR, key: "2", size: 150  },
+          { type: PanelType.CODE_EDITOR, key: "1", size: 150  }, {
+            type: PanelType.MULTIPLE,
+            direction: PanelDirection.HORIZONTAL,
+            children: [
+              { type: PanelType.CODE_EDITOR, key: "1", size: 150  },
+              { type: PanelType.CODE_EDITOR, key: "2", size: 150  },
+              { type: PanelType.CODE_EDITOR, key: "3", size: 150  },
+            ],
+            key: "0",
+            size: 200
+          },
           { type: PanelType.CODE_EDITOR, key: "3", size: 150  },
         ],
         key: "2",
