@@ -1,7 +1,10 @@
+
 .app-panel {
   border-radius: 10px;
   margin: 2px;
   background: #dddddd;
+  display: flex;
+  flex-direction: column;
 } 
 
 .app-panel-multiple {
@@ -24,9 +27,6 @@
   background: rgb(129, 32, 32);
 }
 
-.app-panel-inner-layout-controller {
-    display: flex;
-}
 
 
 .resize-horizontal {
@@ -35,7 +35,6 @@
   margin-left: -3px;
   z-index: 1;
   cursor: col-resize;
-  clear: both;
 }
 
 .resize-vertical {

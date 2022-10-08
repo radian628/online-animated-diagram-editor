@@ -127,15 +127,22 @@ export function AppPanel(props: {
   onResize: (delta: number) => void;
 }) {
   let inner;
+  const parentRef = React.createRef<HTMLDivElement>();
   if (props.data.type == PanelType.MULTIPLE) {
     inner = (
       <div
         style={{
           ...props.style,
-          display: "flex",
-          flexDirection:
-            props.data.direction == PanelDirection.VERTICAL ? "column" : "row",
-          alignItems: "stretch",
+          display: "grid",
+          gridTemplateRows:
+            props.data.direction == PanelDirection.VERTICAL
+              ? props.data.children.map((child) => `${child.size}fr`).join(" ")
+              : undefined,
+          gridTemplateColumns:
+            props.data.direction == PanelDirection.HORIZONTAL
+              ? props.data.children.map((child) => `${child.size}fr`).join(" ")
+              : undefined,
+          height: "100%"
         }}
       >
         {props.data.children.map((panel, i) => {
@@ -143,16 +150,22 @@ export function AppPanel(props: {
           return (
             <React.Fragment key={panel.key}>
               <AppPanel
-                onResize={delta => {
+              
+                onResize={(delta) => {
                   if (props.data.type != PanelType.MULTIPLE) return undefined;
+                  let totalSize = props.data.children.reduce((prev, curr) => prev + curr.size, 0);
+                  let rect = parentRef.current?.getBoundingClientRect();
+                  if (!rect) return;
+                  let adjustedDelta = delta / ((props.data.direction == PanelDirection.VERTICAL) ? rect.height : rect.width) * totalSize;
                   let newChildren = [...props.data.children];
-                  newChildren[i].size += delta;
-                  if (newChildren[i + 1]) newChildren[i + 1].size -= delta; 
+                  newChildren[i].size += adjustedDelta;
+                  if (newChildren[i + 1]) newChildren[i + 1].size -= adjustedDelta;
                   props.setData({
                     ...props.data,
-                    children: newChildren
+                    children: newChildren,
                   });
                 }}
+
                 data={panel}
                 setData={(p) => {
                   if (props.data.type != PanelType.MULTIPLE) return undefined;
@@ -172,7 +185,7 @@ export function AppPanel(props: {
     );
   } else {
     inner = (
-      <div>
+      <div style={{ flexGrow: 1 }}>
         <p>
           {
             {
@@ -188,22 +201,33 @@ export function AppPanel(props: {
     );
   }
 
-  const parentRef = React.createRef<HTMLDivElement>();
 
   return (
-    <React.Fragment>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "stretch",
+        flexDirection:
+          props.direction == PanelDirection.VERTICAL ? "column" : "row",
+      }}
+    >
       <div
         style={{
           ...props.outerStyle,
-          width: (props.direction == PanelDirection.HORIZONTAL) ? (props.data.size+"px") : "",
-          height: (props.direction == PanelDirection.VERTICAL) ? (props.data.size+"px") : "",
+          flexGrow: 1
         }}
         ref={parentRef}
-        className={(props.data.type == PanelType.MULTIPLE) ? "app-panel-multiple app-panel" : "app-panel"}
+        className={
+          props.data.type == PanelType.MULTIPLE
+            ? "app-panel-multiple app-panel"
+            : "app-panel"
+        }
       >
-        {(props.data.type == PanelType.MULTIPLE) ? undefined : <div>
-          <button className="close-panel-button">X</button>
-        </div>}
+        {props.data.type == PanelType.MULTIPLE ? undefined : (
+          <div>
+            <button className="close-panel-button">X</button>
+          </div>
+        )}
         {inner}
       </div>
       <ResizeSeparator
@@ -212,6 +236,6 @@ export function AppPanel(props: {
         }}
         direction={props.direction}
       ></ResizeSeparator>
-    </React.Fragment>
+    </div>
   );
 }

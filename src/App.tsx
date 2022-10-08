@@ -24,6 +24,17 @@ function App() {
         key: "0",
         size: 200
       },
+      {
+        type: PanelType.MULTIPLE,
+        direction: PanelDirection.VERTICAL,
+        children: [
+          { type: PanelType.CODE_EDITOR, key: "1", size: 150  },
+          { type: PanelType.CODE_EDITOR, key: "2", size: 150  },
+          { type: PanelType.CODE_EDITOR, key: "3", size: 150  },
+        ],
+        key: "2",
+        size: 200
+      },
       { type: PanelType.CODE_EDITOR, key: "3", size: 200 },
     ],
     size: 600,
@@ -34,6 +45,10 @@ function App() {
     <Provider store={store}>
       <div className="App">
         <AppPanel
+          outerStyle={{
+            height: "calc(100vh - 20px)",
+            width: "calc(100vw - 20px)"
+          }}
           onResize={delta => {
             setData({
               ...data,
