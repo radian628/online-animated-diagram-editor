@@ -12,21 +12,21 @@ function App() {
     type: PanelType.MULTIPLE,
     direction: PanelDirection.HORIZONTAL,
     children: [
-      { type: PanelType.CODE_EDITOR, key: "1", size: 1  },
+      { type: PanelType.CODE_EDITOR, key: "1", size: 200  },
       {
         type: PanelType.MULTIPLE,
         direction: PanelDirection.VERTICAL,
         children: [
-          { type: PanelType.CODE_EDITOR, key: "1", size: 1  },
-          { type: PanelType.CODE_EDITOR, key: "2", size: 1  },
-          { type: PanelType.CODE_EDITOR, key: "3", size: 1  },
+          { type: PanelType.CODE_EDITOR, key: "1", size: 150  },
+          { type: PanelType.CODE_EDITOR, key: "2", size: 150  },
+          { type: PanelType.CODE_EDITOR, key: "3", size: 150  },
         ],
         key: "0",
-        size: 1 
+        size: 200
       },
-      { type: PanelType.CODE_EDITOR, key: "3", size: 1 },
+      { type: PanelType.CODE_EDITOR, key: "3", size: 200 },
     ],
-    size: 1,
+    size: 600,
     key: "0"
   })
 
@@ -34,6 +34,12 @@ function App() {
     <Provider store={store}>
       <div className="App">
         <AppPanel
+          onResize={delta => {
+            setData({
+              ...data,
+              size: data.size + delta
+            });
+          }}
           data={data}
           setData={setData}
           direction={PanelDirection.VERTICAL}

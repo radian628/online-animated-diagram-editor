@@ -1,8 +1,12 @@
 .app-panel {
-  border: 1px solid black;
   border-radius: 10px;
   margin: 2px;
+  background: #dddddd;
 } 
+
+.app-panel-multiple {
+  background: #eeeeee;
+}
 
 .close-panel-button {
   width: 18px;
@@ -20,22 +24,34 @@
   background: rgb(129, 32, 32);
 }
 
+.app-panel-inner-layout-controller {
+    display: flex;
+}
+
 
 .resize-horizontal {
-  width: 10px;
-  margin-right: -5px;
-  margin-left: -5px;
+  width: 6px;
+  margin-right: -3px;
+  margin-left: -3px;
   z-index: 1;
-  height: 100%;
   cursor: col-resize;
   clear: both;
 }
 
 .resize-vertical {
-  height: 10px;
-  margin-top: -5px;
-  margin-bottom: -5px;
+  height: 6px;
+  margin-top: -3px;
+  margin-bottom: -3px;
   z-index: 1;
-  width: 100%;
   cursor: row-resize;
+}
+
+.resize-separator {
+  background-color: #00000000;
+  transition: background-color 0.2s;
+  border-radius: 3px;
+}
+
+.resize-separator:hover {
+  background-color: #00000033;
 }
