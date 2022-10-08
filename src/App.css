@@ -63,6 +63,34 @@
   width: 100%;
 }
 
+.add-panel-container button {
+  border-radius: 20px;
+  border: none;
+  background: #bbbbbb;
+  color: white;
+  display: grid;
+  overflow: auto;
+  padding: 0;
+  transition: background-color 0.15s;
+}
+.add-panel-container button:hover {
+  border-radius: 20px;
+  border: none;
+  background: #888888;
+  color: white;
+  display: grid;
+  overflow: auto;
+  padding: 0;
+}
+
+.add-panel-container button svg {
+  width: 50%;
+  height: 50%;
+  align-self: center;
+  justify-self: center;
+  margin: -50%;
+}
+
 
 
 .resize-horizontal {

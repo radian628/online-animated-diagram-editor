@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { IoAdd, IoClose } from "react-icons/io5";
+import { IoAdd, IoClose, IoCaretBack, IoCaretForward, IoCaretUp, IoCaretDown } from "react-icons/io5";
+import { SingleAppPanelState, SinglePanelType } from "./SingleAppPanel";
 
 export enum PanelDirection {
   HORIZONTAL,
@@ -7,32 +8,13 @@ export enum PanelDirection {
 }
 
 export enum PanelType {
-  UNDECIDED,
-  TIMELINE,
-  DISPLAY,
-  SETTINGS,
-  CODE_EDITOR,
-  MULTIPLE,
+  SINGLE,
+  MULTIPLE
 }
 
-export type Undecided = {
-  type: PanelType.UNDECIDED;
-  key: string;
-};
-export type Timeline = {
-  type: PanelType.TIMELINE;
-  key: string;
-};
-export type Display = {
-  type: PanelType.DISPLAY;
-  key: string;
-};
-export type Settings = {
-  type: PanelType.SETTINGS;
-  key: string;
-};
-export type CodeEditor = {
-  type: PanelType.CODE_EDITOR;
+export type Single = {
+  type: PanelType.SINGLE;
+  panel: SingleAppPanelState
   key: string;
 };
 export type Multiple = {
@@ -43,12 +25,8 @@ export type Multiple = {
 };
 
 export type Panel = (
-  | Timeline
-  | Display
-  | Settings
-  | CodeEditor
+  Single
   | Multiple
-  | Undecided
 ) & {
   size: number;
 };
@@ -135,7 +113,7 @@ function AddPanelGrid(props: {
         gridColumnStart: 2,
         gridColumnEnd: 3
       }}
-    >Add Above</button>
+    ><IoCaretUp></IoCaretUp></button>
     <button
       onClick={() => props.onAddPanel(PanelDirection.HORIZONTAL, false)}
       style={{
@@ -144,7 +122,7 @@ function AddPanelGrid(props: {
         gridRowStart: 2,
         gridRowEnd: 3,
       }}
-    >Add Left</button>
+    ><IoCaretBack></IoCaretBack></button>
     <button
       onClick={() => props.onAddPanel(PanelDirection.HORIZONTAL, true)}
       style={{
@@ -153,7 +131,7 @@ function AddPanelGrid(props: {
         gridRowStart: 2,
         gridRowEnd: 3,
       }}
-      >Add Right</button>
+      ><IoCaretForward></IoCaretForward></button>
     <button
       onClick={() => props.onAddPanel(PanelDirection.VERTICAL, true)}
       style={{
@@ -162,7 +140,7 @@ function AddPanelGrid(props: {
         gridRowStart: 3,
         gridRowEnd: 4,
       }}
-    >Add Below</button>
+    ><IoCaretDown></IoCaretDown></button>
   </div>
 }
 
@@ -258,13 +236,15 @@ export function AppPanel(props: {
                   newChildren[i].size = newSize;
                   if (positive) {
                     newChildren.splice(i + 1, 0, {
-                      type: PanelType.UNDECIDED,
+                      type: PanelType.SINGLE,
+                      panel: { type: SinglePanelType.UNDECIDED },
                       size: newSize,
                       key: makeKey()
                     });
                   } else {
                     newChildren.splice(i, 0, {
-                      type: PanelType.UNDECIDED,
+                      type: PanelType.SINGLE,
+                      panel: { type: SinglePanelType.UNDECIDED },
                       size: newSize,
                       key: makeKey()
                     });
@@ -283,16 +263,7 @@ export function AppPanel(props: {
   } else {
     inner = (
       <div style={{ flexGrow: 1 }}>
-        <p>
-          {
-            {
-              [PanelType.TIMELINE]: "timeline",
-              [PanelType.DISPLAY]: "display",
-              [PanelType.SETTINGS]: "settings",
-              [PanelType.CODE_EDITOR]: "editor",
-              [PanelType.UNDECIDED]: "undecided",
-            }[props.data.type]
-          }
+        <p>placeholder
         </p>
       </div>
     );
@@ -320,7 +291,7 @@ export function AppPanel(props: {
                 props.onAddPanel(positive);
               } else {
                 const oldPanel = { ...props.data, size: props.data.size / 2 };
-                const newPanel: Panel = { type: PanelType.UNDECIDED, key: makeKey(), size: props.data.size / 2 };
+                const newPanel: Panel = { type: PanelType.SINGLE, panel: { type: SinglePanelType.UNDECIDED }, key: makeKey(), size: props.data.size / 2 };
                 props.setData({
                   type: PanelType.MULTIPLE,
                   size: props.data.size,
