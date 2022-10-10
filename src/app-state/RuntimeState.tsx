@@ -1,6 +1,6 @@
-import { ID } from "./State"
+import { AppState } from "./State"
 
-type DrawFunctionArgs = {
+export type DrawFunctionArgs = {
   ctx: CanvasRenderingContext2D, // canvas context for drawing custom stuff
   width: number, // canvas width in pixels
   height: number, // canvas height in pixels
@@ -14,9 +14,10 @@ type DrawFunctionArgs = {
   opts: object // custom settings for a drawable object
 }
 
-type DrawFunction = (...args: any[]) => void;
+export type DrawFunction = (...args: any[]) => void;
 
 export type RuntimeAppState = {
-  functionCache: Record<ID, DrawFunction>,
-  getFunction: (id: ID) => DrawFunction
+  functionCache: Map<string, DrawFunction>
+  state: AppState,
+  load: (preSerializationState: string) => void
 }
