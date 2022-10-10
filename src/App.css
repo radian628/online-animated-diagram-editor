@@ -9,6 +9,18 @@
   font-size: 12px;
 } 
 
+h2 {
+  font-size: 16px;
+  margin-bottom: 0;
+  margin-left: 10px;
+}
+
+input {
+  border: none;
+  margin-left: 5px;
+  border-radius: 5px;
+}
+
 .app-panel-multiple {
   background: #eeeeee;
 }
@@ -134,4 +146,12 @@
 
 .resize-separator:hover {
   background-color: #00000033;
+}
+
+
+
+
+
+.highlighted {
+  background-color: yellow;
 }
