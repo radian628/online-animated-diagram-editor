@@ -11,7 +11,13 @@ export const useAppStore = create<RuntimeAppState>((set) => ({
         type: "text/plain",
         data: "sdkfskdfhsdjkfh",
         tags: ["text"]
-      }
+      },
+      b: {
+        name: "test file 2",
+        type: "text/plain",
+        data: "sdkfskdfhsdjkfh",
+        tags: ["text", "tag2"]
+      },
     },
     tags: {}
   },

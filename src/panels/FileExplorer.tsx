@@ -14,7 +14,10 @@ export function FileExplorer() {
     state => [state.state.files]
   );
 
-  const searchTags = tagsFilter.split(",").map(s => s.replace(/^\s|\s$/g, ""));
+  const searchTags = tagsFilter
+    .split(",")
+    .map(s => s.replace(/^\s+|\s+$/g, "")) // no leading/trailing spaces
+    .filter(s => s); // no empty tags
 
   return <div>
     <h2>Search</h2>
@@ -39,7 +42,19 @@ export function FileExplorer() {
       <tbody>
         {
           Object.entries(files)
-            .filter(([id, file]) => file.name.match(fileNameFilter))
+
+            // name match
+            .filter(([id, file]) => file.name.indexOf(fileNameFilter) != -1)
+
+            // tags match
+            .filter(([id, file]) => {
+              for (let tag of searchTags) {
+                if (file.tags.indexOf(tag) == -1) return false;
+              }
+              return true;
+            })
+
+            // formatting
             .map(([id, file]) => {
               return <tr key={id}>
 
@@ -52,7 +67,9 @@ export function FileExplorer() {
                 
                 <td>{file.type}</td>
 
-                <td>{file.tags.map(tag => <span key={tag}>{tag}</span>)}</td>
+                <td>{file.tags.map(tag => 
+                  <span className={`file-tag${searchTags.indexOf(tag) == -1 ? "" : " highlighted"}`} key={tag}>{tag}</span>)
+                }</td>
 
               </tr>
             })
