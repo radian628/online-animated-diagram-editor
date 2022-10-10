@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { IoAdd, IoClose, IoCaretBack, IoCaretForward, IoCaretUp, IoCaretDown } from "react-icons/io5";
-import { SingleAppPanelState, SinglePanelType } from "./SingleAppPanel";
+import { PanelTypeSelector } from "./panels/PanelTypeSelector";
+import { SingleAppPanel, SingleAppPanelState, SinglePanelType } from "./SingleAppPanel";
 
 export enum PanelDirection {
   HORIZONTAL,
@@ -146,7 +147,7 @@ function AddPanelGrid(props: {
 
 
 
-
+// Nestable app panel
 export function AppPanel(props: {
   data: Panel;
   setData: (p: Panel) => void;
@@ -159,15 +160,20 @@ export function AppPanel(props: {
   onAddPanel?: (positive: boolean) => void
 }) {
   
+  // Is the "add a new panel" grid open?
   const [isAdding, setIsAdding] = useState(false);
 
+  // Delete empty "multiple" panels
   useEffect(() => {
     if (props.data.type != PanelType.MULTIPLE) return;
     if (props.data.children.length == 0 && props.onDelete) props.onDelete();
   });
 
+  // determine inner content of the panels
   let inner;
   const parentRef = React.createRef<HTMLDivElement>();
+
+  // case with multiple child panels
   if (props.data.type == PanelType.MULTIPLE) {
     inner = (
       <div
@@ -185,6 +191,7 @@ export function AppPanel(props: {
           height: "100%"
         }}
       >
+        
         {props.data.children.map((panel, i) => {
           if (props.data.type != PanelType.MULTIPLE) return undefined;
           return (
@@ -263,8 +270,9 @@ export function AppPanel(props: {
   } else {
     inner = (
       <div style={{ flexGrow: 1 }}>
-        <p>placeholder
-        </p>
+        <SingleAppPanel
+          type={props.data.panel.type}
+        ></SingleAppPanel>
       </div>
     );
   }
@@ -319,6 +327,19 @@ export function AppPanel(props: {
           {props.data.type == PanelType.MULTIPLE ? undefined : (
             <div>
               {props.onDelete ? <button onClick={props.onDelete} className="close-panel-button"><IoClose></IoClose></button> : undefined}
+              <PanelTypeSelector
+                panelType={props.data.panel.type}
+                setPanelType={type => {
+                  if (props.data.type != PanelType.SINGLE) return;
+                  props.setData({
+                    ...props.data,
+                    panel: {
+                      ...props.data.panel,
+                      type
+                    }
+                  });
+                }}
+              ></PanelTypeSelector>
               <button onClick={() => {
                 setIsAdding(true);
               }} className="add-panel-button"><IoAdd></IoAdd></button>

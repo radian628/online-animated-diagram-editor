@@ -44,6 +44,22 @@
   transition: background-color 0.15s;
   font-size: 16px;
 }
+.panel-type-selector {
+  height: 18px;
+  border: none;
+  background: rgb(0, 0, 0);
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  margin: 0;
+  font-size: 12px;
+  width: 30px;
+  outline: none;
+  padding: 0;
+  transform: translateY(-4px);
+  outline: none;
+}
+
 
 .add-panel-button svg {
   margin-left: -5px;
@@ -72,6 +88,7 @@
   overflow: auto;
   padding: 0;
   transition: background-color 0.15s;
+  cursor: pointer;
 }
 .add-panel-container button:hover {
   border-radius: 20px;

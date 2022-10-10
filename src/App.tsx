@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import { Provider } from 'react-redux';
-import store from "./Store";
 import './App.css'
 import { AppPanel, Panel, PanelDirection, PanelType } from './AppPanel';
 import { SinglePanelType } from './SingleAppPanel';
@@ -23,25 +22,23 @@ function App() {
   })
 
   return (
-    <Provider store={store}>
-      <div className="App">
-        <AppPanel
-          outerStyle={{
-            height: "calc(100vh - 20px)",
-            width: "calc(100vw - 20px)"
-          }}
-          onResize={delta => {
-            setData({
-              ...data,
-              size: data.size + delta
-            });
-          }}
-          data={data}
-          setData={setData}
-          direction={PanelDirection.VERTICAL}
-        ></AppPanel>
-      </div>
-    </Provider>
+    <div className="App">
+      <AppPanel
+        outerStyle={{
+          height: "calc(100vh - 20px)",
+          width: "calc(100vw - 18px)"
+        }}
+        onResize={delta => {
+          setData({
+            ...data,
+            size: data.size + delta
+          });
+        }}
+        data={data}
+        setData={setData}
+        direction={PanelDirection.VERTICAL}
+      ></AppPanel>
+    </div>
   )
 }
 

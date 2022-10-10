@@ -1,5 +1,1 @@
-import { configureStore } from "@reduxjs/toolkit";
-
-export default configureStore({
-    reducer: {}
-});
+export let noerror = 0;
