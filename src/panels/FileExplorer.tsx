@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAppStore } from "../app-state/StateManager";
-import { StringInput } from "./Common";
+import { Helpable, StringInput } from "./Common";
 
 function zipper<A,B>(a: A[], b: (i: number) => B) {
   return a.map((e, i) => (i == a.length - 1) ? [e] : [e, b(i)]).flat(1);
@@ -22,13 +22,21 @@ export function FileExplorer() {
   return <div>
     <h2>Search</h2>
 
-    <label>Name</label>
-    <StringInput val={fileNameFilter} setVal={setFileNameFilter}></StringInput>
+    <Helpable
+      message="Only show files whose names contain the given text. Searching is case-sensitive."
+    >
+      <label>Name</label>
+      <StringInput val={fileNameFilter} setVal={setFileNameFilter}></StringInput>
+    </Helpable>
     
     <br></br>
     
-    <label>Tags (comma-separated)</label>
-    <StringInput val={tagsFilter} setVal={setTagsFilter}></StringInput>
+    <Helpable
+      message="Only show files which have all the tags listed here. Tags should be comma-separated. Leading or trailing spaces are ignored. This means that the tag '   text  ' is treated the same as the tag 'text'."
+    >
+      <label>Tags (comma-separated)</label>
+      <StringInput val={tagsFilter} setVal={setTagsFilter}></StringInput>
+    </Helpable>
 
     <h2>Files</h2>
     <table>

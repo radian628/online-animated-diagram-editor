@@ -35,5 +35,15 @@ export const useAppStore = create<RuntimeAppState>((set) => ({
     } catch {
       window.alert("Failed to load project.");
     }
+  },
+
+  setHelpBoxMessage: null,
+  setSetHelpBoxMessage: fn => {
+    set({ setHelpBoxMessage: fn });
+  },
+
+  onActiveHelpBoxChange: () => {},
+  setOnActiveHelpBoxChange: fn => {
+    set({ onActiveHelpBoxChange: fn })
   }
 }))

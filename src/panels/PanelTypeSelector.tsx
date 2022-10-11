@@ -12,6 +12,7 @@ export function PanelTypeSelector(props: {
     }}
   > 
     <option value={SinglePanelType.UNDECIDED}>None</option>
+    <option value={SinglePanelType.HELP}>Help</option>
     <option value={SinglePanelType.CODE_EDITOR}>Code Editor</option>
     <option value={SinglePanelType.FILE_EXPLORER}>File Explorer</option>
   </select>

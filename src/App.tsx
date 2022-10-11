@@ -1,13 +1,9 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import { Provider } from 'react-redux';
 import './App.css'
 import { AppPanel, Panel, PanelDirection, PanelType } from './AppPanel';
 import { SinglePanelType } from './SingleAppPanel';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   const [data, setData] = useState<Panel>({
     type: PanelType.MULTIPLE,
     direction: PanelDirection.HORIZONTAL,

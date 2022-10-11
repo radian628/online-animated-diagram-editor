@@ -1,5 +1,6 @@
 import { CodeEditor } from "./panels/CodeEditor"
 import { FileExplorer } from "./panels/FileExplorer"
+import { Help } from "./panels/Help"
 import { Undecided } from "./panels/Undecided"
 
 export enum SinglePanelType {
@@ -8,8 +9,7 @@ export enum SinglePanelType {
   FILE_EXPLORER,
   TIMELINE,
   DISPLAY,
-  HELP,
-
+  HELP
 }
 
 export type SingleAppPanelState = {
@@ -17,7 +17,8 @@ export type SingleAppPanelState = {
 }
 
 export function SingleAppPanel(props: {
-  type: SinglePanelType
+  type: SinglePanelType,
+  setIsActive: (b: boolean) => void
 }) {
   switch (props.type) {
     case SinglePanelType.UNDECIDED:
@@ -26,6 +27,8 @@ export function SingleAppPanel(props: {
       return <CodeEditor></CodeEditor>
     case SinglePanelType.FILE_EXPLORER:
       return <FileExplorer></FileExplorer>
+    case SinglePanelType.HELP:
+      return <Help setIsActive={props.setIsActive}></Help>
     default:
       return <p>Error: This panel type is unimplemented!</p>
   }

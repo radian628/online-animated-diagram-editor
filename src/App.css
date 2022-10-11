@@ -12,7 +12,6 @@
 h2 {
   font-size: 16px;
   margin-bottom: 0;
-  margin-left: 10px;
 }
 
 input {
@@ -162,4 +161,47 @@ input {
 
 .highlighted {
   background-color: yellow;
+}
+
+
+
+
+.helpable {
+  display: inline;
+  width: 100%;
+  height: 100%;
+}
+
+.panel-root {
+  width: calc(100% - 20px);
+  height: calc(100% - 20px);
+  border-radius: 5px;
+}
+
+.help-panel {
+  margin: 10px;
+  padding: 5px;
+  margin-bottom: 30px;
+}
+
+.is-active-panel {
+  background-color: #bbbbbb;
+}
+
+
+kbd {
+  border-radius: 5px;
+  background-color: black;
+  color: white;
+  padding: 2px 4px;
+  font-size: 12px;
+  font-family: sans-serif;
+}
+
+
+
+
+.add-panel-direction-button {
+  width: 100%;
+  height: 100%;
 }
