@@ -12,8 +12,6 @@ export function Help(props: {
       state => [state.activeHelpBoxUUID, state.setActiveHelpBoxUUID, state.helpBoxMessage]
     );
 
-    const [isLocked, setIsLocked] = useState(false);
-
     const [uuid] = useState(uuidv4());
 
     const [myHelpBoxMessage, setMyHelpBoxMessage] = useState<string | JSX.Element | JSX.Element[]>(
@@ -21,23 +19,23 @@ export function Help(props: {
     );
 
     useEffect(() => {
-        if (uuid == activeHelpBoxUUID && !isLocked) {
+        if (uuid == activeHelpBoxUUID) {
             setMyHelpBoxMessage(helpBoxMessage);
         }
-    }, [helpBoxMessage, isLocked]);
+    }, [helpBoxMessage]);
   
     useEffect(() => {
 
         if (uuid == activeHelpBoxUUID) {
-            const keydown = (e: KeyboardEvent) => {
-                if (e.key == "h" && e.getModifierState("Control")) {
-                    setIsLocked(!isLocked);
-                }
-            }
+            // const keydown = (e: KeyboardEvent) => {
+            //     if (e.key == "h" && document.activeElement === document.body) {
+            //         setIsLocked(!isLocked);
+            //     }
+            // }
             if (!props.isActive) props.setIsActive(true);
             
-            document.addEventListener("keydown", keydown);
-            return () => document.removeEventListener("keydown", keydown);
+            // document.addEventListener("keydown", keydown);
+            // return () => document.removeEventListener("keydown", keydown);
         } else {
             if (props.isActive) props.setIsActive(false);
         }
@@ -46,8 +44,7 @@ export function Help(props: {
     return <Helpable
         message={<ul>
             <li>Click a help panel to select it.</li>
-            <li>Hover over something in the app, and information about it will display here.</li>
-            <li>Press <kbd>Ctrl+H</kbd> to lock the selected help panel, preventing it from changing until unlocked.</li>
+            <li>Press <kbd>H</kbd> while hovering over something to see info about it in the selected help panel</li>
         </ul>}
     ><div
         className={`help-panel panel-root`}
@@ -55,7 +52,10 @@ export function Help(props: {
             setActiveHelpBoxUUID(uuid);
         }}
     >
-        <h2>Help Panel {isLocked ? <IoLockClosed></IoLockClosed> : undefined}</h2> 
+        <h2>Help Panel</h2> 
+        {props.isActive 
+        ? <p>Press <kbd>H</kbd> while hovering over something to see info about it here! You can use this feature if you see a <span className="helpable-info">?</span> next to your mouse.</p>
+        : undefined}
         <br></br>
         {myHelpBoxMessage}
     </div></Helpable>

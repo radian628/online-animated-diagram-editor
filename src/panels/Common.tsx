@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useAppStore } from "../app-state/StateManager";
 
 export function removeAttribs<T, K extends (keyof T)[]>(obj: T, ...props: K): Omit<T, K[number]> {
@@ -29,16 +30,50 @@ export function Helpable(props: {
     state => [state.setHelpBoxMessage]
   );
 
+  const [isMouseOver, setIsMouseOver] = useState(false);
+
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const keydown = (e: KeyboardEvent) => {
+      if (isMouseOver && e.key == "h" && (document.activeElement === document.body || document.activeElement?.tagName === "BUTTON")) {
+        if (setHelpBoxMessage) setHelpBoxMessage(props.message);
+      }
+    }
+    document.addEventListener("keydown", keydown);
+    
+    const mousemove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    }
+    document.addEventListener("mousemove", mousemove);
+    
+    return () => {
+      document.removeEventListener("keydown", keydown);
+      document.removeEventListener("mousemove", mousemove);
+    }
+  })
+
+
   return <div
     {...removeAttribs(props, "children", "message")}
     className="helpable"
-    onMouseEnter={() => {
-      if (setHelpBoxMessage) setHelpBoxMessage(props.message);
+    onMouseOver={() => {
+      setIsMouseOver(true);
     }}
-    onMouseMove={() => {
-      if (setHelpBoxMessage) setHelpBoxMessage(props.message);
+    onMouseOut={() => {
+      setIsMouseOver(false);
     }}
   >
     {props.children}
+    {isMouseOver ? 
+    <div
+      style={{
+        position: "absolute",
+        top: `${mousePos.y}px`,
+        left: `${mousePos.x}px`,
+      }}
+      className="helpable-info"
+    >?</div>
+    : undefined}
   </div>
 }

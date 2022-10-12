@@ -32,7 +32,13 @@ export function FileExplorer() {
     <br></br>
     
     <Helpable
-      message="Only show files which have all the tags listed here. Tags should be comma-separated. Leading or trailing spaces are ignored. This means that the tag '   text  ' is treated the same as the tag 'text'."
+      message={
+        [<p>Only show files which have all the tags listed here.</p>,
+        <ul>
+          <li>Tags should be comma-separated</li>
+          <li>Leading or trailing spaces in a tag name are ignored.</li>
+        </ul>]
+      }
     >
       <label>Tags (comma-separated)</label>
       <StringInput val={tagsFilter} setVal={setTagsFilter}></StringInput>

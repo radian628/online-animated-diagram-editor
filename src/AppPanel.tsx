@@ -117,6 +117,8 @@ function AddPanelGrid(props: {
                 props.onAddPanel(PanelDirection.HORIZONTAL, true)
             } else if (e.key == "ArrowDown") {
                 props.onAddPanel(PanelDirection.VERTICAL, true)
+            } else if (e.key == "Escape") {
+              props.onExit();
             }
         }
         document.addEventListener("keydown", keydown);
@@ -217,6 +219,8 @@ export function AppPanel(props: {
 
   // case with multiple child panels
   if (props.data.type == PanelType.MULTIPLE) {
+    let totalChildSize = props.data.children.reduce((prev, cur) => prev + cur.size, 0);
+
     inner = (
       <div
         style={{
@@ -224,11 +228,11 @@ export function AppPanel(props: {
           display: "grid",
           gridTemplateRows:
             props.data.direction == PanelDirection.VERTICAL
-              ? props.data.children.map((child) => `${child.size}fr`).join(" ")
+              ? props.data.children.map((child) => `${child.size / totalChildSize * 2}fr`).join(" ")
               : undefined,
           gridTemplateColumns:
             props.data.direction == PanelDirection.HORIZONTAL
-              ? props.data.children.map((child) => `${child.size}fr`).join(" ")
+              ? props.data.children.map((child) => `${child.size / totalChildSize * 2}fr`).join(" ")
               : undefined,
           height: "100%"
         }}
@@ -358,7 +362,7 @@ export function AppPanel(props: {
             }
           }}
         ></AddPanelGrid>
-        :
+        : undefined }
         <div
           style={{
             ...props.outerStyle,
@@ -400,7 +404,6 @@ export function AppPanel(props: {
           )}
           {inner}
         </div>
-      }
       {props.lastChild ? undefined : <ResizeSeparator
         onMove={(delta) => {
           props.onResize(delta);

@@ -95,6 +95,7 @@ input {
   border-radius: 10px;
   height: 100%;
   width: 100%;
+  position: fixed;
 }
 
 .add-panel-container button {
@@ -183,6 +184,7 @@ input {
   display: inline;
   width: 100%;
   height: 100%;
+  z-index: 4;
 }
 
 .panel-root {
@@ -196,6 +198,15 @@ input {
   padding: 5px;
   margin-bottom: 30px;
   overflow-y: auto;
+}
+
+.helpable-info {
+  background: #29521e;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  padding: 4px;
+  z-index: 99999999;
 }
 
 .is-active-panel {
