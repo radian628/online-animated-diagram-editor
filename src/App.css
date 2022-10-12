@@ -123,16 +123,16 @@ input {
 
 .resize-horizontal {
   width: 6px;
-  margin-right: -1px;
-  margin-left: -1px;
+  margin-right: 0px;
+  margin-left: 0px;
   z-index: 1;
   cursor: col-resize;
 }
 
 .resize-vertical {
   height: 6px;
-  margin-top: -1px;
-  margin-bottom: -1px;
+  margin-top: 0px;
+  margin-bottom: 0px;
   z-index: 1;
   cursor: row-resize;
 }

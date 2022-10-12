@@ -327,7 +327,9 @@ export function AppPanel(props: {
     <div
       style={{
         display: "flex",
+        overflowY: "auto",
         alignItems: "stretch",
+        minHeight: 0,
         flexDirection:
           props.direction == PanelDirection.VERTICAL ? "column" : "row",
       }}
