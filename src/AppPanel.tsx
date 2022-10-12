@@ -332,6 +332,7 @@ export function AppPanel(props: {
         minHeight: 0,
         flexDirection:
           props.direction == PanelDirection.VERTICAL ? "column" : "row",
+        willChange: "transform"
       }}
     >
       {
@@ -367,7 +368,7 @@ export function AppPanel(props: {
           className={
             props.data.type == PanelType.MULTIPLE
               ? "app-panel-multiple app-panel"
-              : "app-panel" + (isActive ? " is-active-panel" : "")
+              : "app-panel-single app-panel" + (isActive ? " is-active-panel" : "")
           }
         >
           {props.data.type == PanelType.MULTIPLE ? undefined : (

@@ -1,3 +1,6 @@
+body {
+  background-color: #000000;
+}
 
 .app-panel {
   border-radius: 10px;
@@ -21,7 +24,11 @@ input {
 }
 
 .app-panel-multiple {
-  background: #eeeeee;
+  background: #000000;
+}
+
+.app-panel-single {
+  margin: 1px;
 }
 
 .close-panel-button {
@@ -127,6 +134,9 @@ input {
   margin-left: 0px;
   z-index: 1;
   cursor: col-resize;
+  position: fixed;
+  right: 0px;
+  height: 100%;
 }
 
 .resize-vertical {
@@ -135,6 +145,9 @@ input {
   margin-bottom: 0px;
   z-index: 1;
   cursor: row-resize;
+  position: fixed;
+  bottom: 0px;
+  width: 100%;
 }
 
 .resize-separator {
