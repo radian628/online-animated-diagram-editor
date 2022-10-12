@@ -18,7 +18,8 @@ export type SingleAppPanelState = {
 
 export function SingleAppPanel(props: {
   type: SinglePanelType,
-  setIsActive: (b: boolean) => void
+  setIsActive: (b: boolean) => void,
+  isActive: boolean
 }) {
   switch (props.type) {
     case SinglePanelType.UNDECIDED:
@@ -28,7 +29,7 @@ export function SingleAppPanel(props: {
     case SinglePanelType.FILE_EXPLORER:
       return <FileExplorer></FileExplorer>
     case SinglePanelType.HELP:
-      return <Help setIsActive={props.setIsActive}></Help>
+      return <Help setIsActive={props.setIsActive} isActive={props.isActive}></Help>
     default:
       return <p>Error: This panel type is unimplemented!</p>
   }

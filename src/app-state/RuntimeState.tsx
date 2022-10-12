@@ -19,10 +19,13 @@ export type DrawFunction = (...args: any[]) => void;
 export type RuntimeAppState = {
   functionCache: Map<string, DrawFunction>
   state: AppState,
+
+  helpBoxMessage: string | JSX.Element | JSX.Element[],
   setHelpBoxMessage: ((message: string | JSX.Element | JSX.Element[]) => void) | null,
-  setSetHelpBoxMessage: (setter: (message: string | JSX.Element | JSX.Element[]) => void) => void
+
+  activeHelpBoxUUID: string,
+  setActiveHelpBoxUUID: (uuid: string) => void,
+
   load: (preSerializationState: string) => void
 
-  onActiveHelpBoxChange: () => void,
-  setOnActiveHelpBoxChange: (fn: () => void) => void
 }

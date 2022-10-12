@@ -37,13 +37,13 @@ export const useAppStore = create<RuntimeAppState>((set) => ({
     }
   },
 
-  setHelpBoxMessage: null,
-  setSetHelpBoxMessage: fn => {
-    set({ setHelpBoxMessage: fn });
+  activeHelpBoxUUID: "",
+  setActiveHelpBoxUUID: (uuid: string) => {
+    set({ activeHelpBoxUUID: uuid });
   },
 
-  onActiveHelpBoxChange: () => {},
-  setOnActiveHelpBoxChange: fn => {
-    set({ onActiveHelpBoxChange: fn })
+  helpBoxMessage: "",
+  setHelpBoxMessage: message => {
+    set({helpBoxMessage: message});
   }
 }))

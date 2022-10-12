@@ -314,6 +314,7 @@ export function AppPanel(props: {
       <div style={{ flexGrow: 1 }}>
         <SingleAppPanel
           setIsActive={setIsActive}
+          isActive={isActive}
           type={props.data.panel.type}
         ></SingleAppPanel>
       </div>
