@@ -57,6 +57,8 @@ export function Help(props: {
         ? <p>Press <kbd>H</kbd> while hovering over something to see info about it here! You can use this feature if you see a <span className="helpable-info">?</span> next to your mouse.</p>
         : undefined}
         <br></br>
-        {myHelpBoxMessage}
+        <div className="help-box-content">
+            {myHelpBoxMessage}
+        </div>
     </div></Helpable>
 }

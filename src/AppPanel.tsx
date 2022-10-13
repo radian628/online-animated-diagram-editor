@@ -3,6 +3,8 @@ import { IoAdd, IoClose, IoCaretBack, IoCaretForward, IoCaretUp, IoCaretDown } f
 import { Helpable } from "./panels/Common";
 import { PanelTypeSelector } from "./panels/PanelTypeSelector";
 import { SingleAppPanel, SingleAppPanelState, SinglePanelType } from "./SingleAppPanel";
+import { v4 as uuidv4 } from "uuid";
+import { AddPanelGrid } from "./AddPanelGrid";
 
 export enum PanelDirection {
   HORIZONTAL,
@@ -102,91 +104,6 @@ export function ResizeSeparator(props: {
 
 
 
-function AddPanelGrid(props: {
-  onExit: () => void
-  onAddPanel: (direction: PanelDirection, positive: boolean) => void
-}) {
-
-    useEffect(() => {
-        const keydown = (e: KeyboardEvent) => {
-            if (e.key == "ArrowUp") {
-                props.onAddPanel(PanelDirection.VERTICAL, false)
-            } else if (e.key == "ArrowLeft") {
-                props.onAddPanel(PanelDirection.HORIZONTAL, false)
-            } else if (e.key == "ArrowRight") {
-                props.onAddPanel(PanelDirection.HORIZONTAL, true)
-            } else if (e.key == "ArrowDown") {
-                props.onAddPanel(PanelDirection.VERTICAL, true)
-            } else if (e.key == "Escape") {
-              props.onExit();
-            }
-        }
-        document.addEventListener("keydown", keydown);
-        return () => {
-            document.removeEventListener("keydown", keydown);
-        }
-    })
-
-  return <div 
-    onMouseLeave={props.onExit}
-  className="add-panel-container">
-    <Helpable
-        style={{
-            gridColumnStart: 2,
-            gridColumnEnd: 3
-        }}
-        message={<p>Click to add the new panel above the current one. You can also do this with the <kbd>Up Arrow</kbd> key.</p>}
-    >
-        <button
-        className="add-panel-direction-button"
-        onClick={() => props.onAddPanel(PanelDirection.VERTICAL, false)}
-        ><IoCaretUp></IoCaretUp></button>
-    </Helpable>
-    <Helpable
-        style={{
-        gridColumnStart: 1,
-        gridColumnEnd: 2,
-        gridRowStart: 2,
-        gridRowEnd: 3,
-        }}
-        message={<p>Click to add the new panel to the left of the current one. You can also do this with the <kbd>Left Arrow</kbd> key.</p>}
-    >
-    <button
-        className="add-panel-direction-button"
-      onClick={() => props.onAddPanel(PanelDirection.HORIZONTAL, false)}
-    ><IoCaretBack></IoCaretBack></button>
-    </Helpable>
-    <Helpable
-        style={{
-        gridColumnStart: 3,
-        gridColumnEnd: 4,
-        gridRowStart: 2,
-        gridRowEnd: 3,
-        }}
-        message={<p>Click to add the new panel to the right of the current one. You can also do this with the <kbd>Right Arrow</kbd> key.</p>}
-    >
-    <button
-        className="add-panel-direction-button"
-      onClick={() => props.onAddPanel(PanelDirection.HORIZONTAL, true)}
-      ><IoCaretForward></IoCaretForward></button>
-      </Helpable>
-    <Helpable
-        message={<p>Click to add the new panel below the current one. You can also do this with the <kbd>Down Arrow</kbd> key.</p>}
-        style={{
-            gridColumnStart: 2,
-            gridColumnEnd: 3,
-            gridRowStart: 3,
-            gridRowEnd: 4,
-        }}
-    >
-        <button
-        className="add-panel-direction-button"
-        onClick={() => props.onAddPanel(PanelDirection.VERTICAL, true)}
-        ><IoCaretDown></IoCaretDown></button>
-    </Helpable>
-  </div>
-}
-
 
 
 // Nestable app panel
@@ -207,11 +124,28 @@ export function AppPanel(props: {
   // Is the "add a new panel" grid open?
   const [isAdding, setIsAdding] = useState(false);
 
+  const [uuid] = useState(uuidv4());
+
+  const [isPanelFocused, setIsPanelFocused] = useState(false);
+
   // Delete empty "multiple" panels
   useEffect(() => {
     if (props.data.type != PanelType.MULTIPLE) return;
     if (props.data.children.length == 0 && props.onDelete) props.onDelete();
   });
+
+  // keybind for adding a panel
+  useEffect(() => {
+    const keydown = (e: KeyboardEvent) => {
+      if (e.key == "=" && isPanelFocused) {
+        setIsAdding(true);
+      }
+    }
+    document.addEventListener("keydown", keydown);
+    return () => {
+      document.removeEventListener("keydown", keydown);
+    }
+  })
 
   // determine inner content of the panels
   let inner;
@@ -315,7 +249,16 @@ export function AppPanel(props: {
     );
   } else {
     inner = (
-      <div style={{ flexGrow: 1 }}>
+      <div 
+        style={{ flexGrow: 1 }}
+        tabIndex={0}
+        onFocus={e => {
+          setIsPanelFocused(true);
+        }}
+        onBlur={e => {
+          setIsPanelFocused(false);
+        }}
+      >
         <SingleAppPanel
           setIsActive={setIsActive}
           isActive={isActive}
@@ -397,9 +340,14 @@ export function AppPanel(props: {
                   });
                 }}
               ></PanelTypeSelector>
-              <button onClick={() => {
-                setIsAdding(true);
-              }} className="add-panel-button"><IoAdd></IoAdd></button>
+
+              <Helpable
+                message="Press this button to split this panel."
+              >       
+                <button onClick={() => {
+                  setIsAdding(true);
+                }} className="add-panel-button"><IoAdd></IoAdd></button>
+              </Helpable>
             </div>
           )}
           {inner}

@@ -28,4 +28,7 @@ export type RuntimeAppState = {
 
   load: (preSerializationState: string) => void
 
+  helpNotifierPos: { x: number, y: number, uuid: string } | null
+  setHelpNotifierPos: (pos: { x: number, y: number, uuid: string } | null) => void
+
 }

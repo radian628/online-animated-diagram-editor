@@ -45,5 +45,10 @@ export const useAppStore = create<RuntimeAppState>((set) => ({
   helpBoxMessage: "",
   setHelpBoxMessage: message => {
     set({helpBoxMessage: message});
+  },
+
+  helpNotifierPos: null,
+  setHelpNotifierPos: pos => {
+    set({ helpNotifierPos: pos });
   }
-}))
+}));

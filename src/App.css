@@ -209,6 +209,12 @@ input {
   z-index: 99999999;
 }
 
+.help-box-content {
+  background: #eeeeee;
+  border-radius: 15px;
+  padding: 5px;
+}
+
 .is-active-panel {
   background-color: #bbbbbb;
 }
