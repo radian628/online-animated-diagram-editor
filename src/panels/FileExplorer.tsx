@@ -82,6 +82,7 @@ export function FileExplorer() {
                 onClick={(e => {
                   setCurrentlyLoadedFileUUID(id);
                 })}
+                className="file-explorer-file-info"
                 key={id}
               >
 

@@ -9,13 +9,13 @@ export const useAppStore = create<RuntimeAppState>((set, get) => ({
       a: {
         name: "testfile",
         type: "text/plain",
-        data: "sdkfskdfhsdjkfh",
+        data: "Contents of testfile",
         tags: ["text"]
       },
       b: {
         name: "test file 2",
         type: "text/plain",
-        data: "sdkfskdfhsdjkfh",
+        data: "Contents of test file 2.",
         tags: ["text", "tag2"]
       },
       c: {
@@ -23,9 +23,15 @@ export const useAppStore = create<RuntimeAppState>((set, get) => ({
         type: "application/prs.diagram",
         data: JSON.stringify({
           type: "js",
-          onUpdate: "ctx.fillText('hello world', width/2, height/2);",
+          onUpdate: "ctx.fillText(textContent, width/2, height/2);",
           onFixedUpdate: "",
-          fixedRefreshRate: 60
+          fixedRefreshRate: 60,
+          settings: [
+            {
+              type: "string",
+              varName: "textContent"
+            }
+          ]
         }),
         tags: ["component"]
       },

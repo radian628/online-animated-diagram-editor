@@ -32,6 +32,10 @@ export const TimelineParser = z.object({
 export type Timeline = z.infer<typeof TimelineParser>;
 
 export const JSDrawableParser = z.object({
+  settings: z.array(z.object({
+    type: z.union([z.literal("number"), z.literal("string")]),
+    varName: z.string()
+  })),
   type: z.literal("js"),
   onUpdate: z.string(),
   onFixedUpdate: z.string(),

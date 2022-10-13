@@ -23,6 +23,20 @@ export function StringInput(props: {
   ></input>
 }
 
+
+export function NumberInput(props: {
+  val: number,
+  setVal: (s: number) => void
+} & React.HTMLAttributes<HTMLInputElement>) {
+  return <input
+    {...removeAttribs(props, "val", "setVal")}
+    onInput={e => {
+      props.setVal(Number(e.currentTarget.value));
+    }}
+    value={props.val.toString()}
+  ></input>
+}
+
 export function Helpable(props: {
   children: string | JSX.Element | JSX.Element[],
   message: string | JSX.Element | JSX.Element[]

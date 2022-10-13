@@ -7,11 +7,9 @@ export type DrawFunctionArgs = {
 
   time: number, // time relative to starting time for the instance of this draw function
   duration: number, // total duration of this draw function call
-  globalTime: number | undefined, // time relative to the enclosing timeline for the instance of this draw function
+  gtime: number | undefined, // time relative to the enclosing timeline for the instance of this draw function
 
   draw: (path: string, opts: object) => void // draws some other thing with the given settings
-
-  opts: object // custom settings for a drawable object
 }
 
 export type DrawFunction = (...args: any[]) => void;

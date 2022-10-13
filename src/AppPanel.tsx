@@ -137,7 +137,7 @@ export function AppPanel(props: {
   // keybind for adding a panel
   useEffect(() => {
     const keydown = (e: KeyboardEvent) => {
-      if (e.key == "=" && isPanelFocused) {
+      if (e.key == "=" && isPanelFocused && document.activeElement?.className == "app-panel-inner-single") {
         setIsAdding(true);
       }
     }
@@ -258,6 +258,7 @@ export function AppPanel(props: {
         onBlur={e => {
           setIsPanelFocused(false);
         }}
+        className="app-panel-inner-single"
       >
         <SingleAppPanel
           setIsActive={setIsActive}

@@ -1,10 +1,8 @@
-
-import CodeMirror from '@uiw/react-codemirror';
-import { javascript } from '@codemirror/lang-javascript';
 import React, { useEffect, useState } from 'react';
 import { v4 } from 'uuid';
 import { useAppStore } from '../app-state/StateManager';
 import { DiagramComponentCodeEditor } from './code-editor-subtypes/DiagramComponentCodeEditor';
+import { DefaultCodeEditor } from "./code-editor-subtypes/DefaultCodeEditor";
 
 export function CodeEditor(props: {
   isActive: boolean,
@@ -23,26 +21,43 @@ export function CodeEditor(props: {
 
   const [uuid] = useState(v4());
 
+  const [isNew, setIsNew] = useState(true);
+  useEffect(() => {
+    if (isNew) {
+      setIsNew(false);
+      setActiveCodeEditorUUID(uuid);
+    }
+  }, []);
+
   const [idOfFileBeingEdited, setIdOfFileBeingEdited] = useState<string>("");
 
   useEffect(() => {
     if (activeCodeEditorUUID == uuid) {
-      props.setIsActive(true);
       setIdOfFileBeingEdited(currentlyLoadedFileUUID);
+    }
+  }, [currentlyLoadedFileUUID]);
+  
+  useEffect(() => {
+    if (activeCodeEditorUUID == uuid) {
+      props.setIsActive(true);
     } else {
       props.setIsActive(false);
     }
-  }, [activeCodeEditorUUID, currentlyLoadedFileUUID])
+  }, [activeCodeEditorUUID])
 
   let editor: JSX.Element = <p>Unable to open: Unknown file type.</p>;
   let file = files[idOfFileBeingEdited];
-  console.log(file, idOfFileBeingEdited);
   if (file !== undefined) {
     switch (file.type) {
     case "application/prs.diagram":
       editor = <DiagramComponentCodeEditor
         uuid={idOfFileBeingEdited}
       ></DiagramComponentCodeEditor>
+      break;
+    default:
+      editor = <DefaultCodeEditor
+      uuid={idOfFileBeingEdited}
+      ></DefaultCodeEditor>
     }
   }
 
@@ -51,7 +66,7 @@ export function CodeEditor(props: {
       setActiveCodeEditorUUID(uuid);
     }}
   >
-    {(idOfFileBeingEdited === undefined ) 
+    {(idOfFileBeingEdited === "" ) 
     ? 
     <p>Open a file by clicking on it in the File Explorer panel.</p>
     :
