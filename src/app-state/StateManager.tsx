@@ -68,5 +68,14 @@ export const useAppStore = create<RuntimeAppState>((set, get) => ({
     set({ state: { ...oldState.state, files: { ...oldState.state.files, [id]: {
       ...oldState.state.files[id], data: contents
     } } }})
-  }
+  },
+
+  activeCodeEditorUUID: "",
+  setActiveCodeEditorUUID: (uuid: string) => {
+    set({ activeCodeEditorUUID: uuid });
+  },
+  currentlyLoadedFileUUID: "",
+  setCurrentlyLoadedFileUUID: (uuid: string) => {
+    set({ currentlyLoadedFileUUID: uuid });
+  },
 }));

@@ -18,8 +18,8 @@ export function FileExplorer() {
   const [fileNameFilter, setFileNameFilter] = useState("");
   const [tagsFilter, setTagsFilter] = useState("");
   
-  const [files] = useAppStore(
-    state => [state.state.files]
+  const [files, setCurrentlyLoadedFileUUID] = useAppStore(
+    state => [state.state.files, state.setCurrentlyLoadedFileUUID]
   );
 
   const searchTags = tagsFilter
@@ -78,7 +78,12 @@ export function FileExplorer() {
 
             // formatting
             .map(([id, file]) => {
-              return <tr key={id}>
+              return <tr
+                onClick={(e => {
+                  setCurrentlyLoadedFileUUID(id);
+                })}
+                key={id}
+              >
 
                 <td>{fileNameFilter
                   ? zipper(file.name.split(fileNameFilter), i => {

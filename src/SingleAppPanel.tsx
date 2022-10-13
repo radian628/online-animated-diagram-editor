@@ -25,7 +25,7 @@ export function SingleAppPanel(props: {
     case SinglePanelType.UNDECIDED:
       return <Undecided></Undecided>
     case SinglePanelType.CODE_EDITOR:
-      return <CodeEditor></CodeEditor>
+      return <CodeEditor setIsActive={props.setIsActive} isActive={props.isActive}></CodeEditor>
     case SinglePanelType.FILE_EXPLORER:
       return <FileExplorer></FileExplorer>
     case SinglePanelType.HELP:

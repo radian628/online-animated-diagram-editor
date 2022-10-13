@@ -34,4 +34,9 @@ export type RuntimeAppState = {
   setHelpNotifierData: (pos: HelpNotifierData | null) => void
 
   setFile: (filename: string, contents: string) => void
+
+  activeCodeEditorUUID: string,
+  setActiveCodeEditorUUID: (uuid: string) => void
+  currentlyLoadedFileUUID: string,
+  setCurrentlyLoadedFileUUID: (uuid: string) => void
 }
