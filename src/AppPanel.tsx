@@ -342,7 +342,7 @@ export function AppPanel(props: {
               ></PanelTypeSelector>
 
               <Helpable
-                message="Press this button to split this panel."
+                message={<p>Press this button to split this panel. This can also be done with the <kbd>=</kbd> key.</p>}
               >       
                 <button onClick={() => {
                   setIsAdding(true);

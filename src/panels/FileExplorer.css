@@ -1,0 +1,8 @@
+th {
+  text-align: left;
+}
+
+td:not(:last-child) {
+  border-right: 1px solid #777777;
+  padding-right: 5px;
+}

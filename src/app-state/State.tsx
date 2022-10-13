@@ -33,7 +33,9 @@ export type Timeline = z.infer<typeof TimelineParser>;
 
 export const JSDrawableParser = z.object({
   type: z.literal("js"),
-  src: z.string()
+  onUpdate: z.string(),
+  onFixedUpdate: z.string(),
+  fixedRefreshRate: z.number()
 });
 export type JSDrawable = z.infer<typeof JSDrawableParser>;
 

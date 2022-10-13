@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useAppStore } from './app-state/StateManager';
 import './App.css'
 import { AppPanel, Panel, PanelDirection, PanelType } from './AppPanel';
+import { HelpNotifier } from './HelpNotifier';
 import { SinglePanelType } from './SingleAppPanel';
 
 function App() {
@@ -18,20 +19,10 @@ function App() {
     key: "0"
   })
 
-  const [helpNotifierPos] = useAppStore(state => [state.helpNotifierPos]);
 
   return (
     <div className="App">
-      {helpNotifierPos ? 
-        <div
-          style={{
-            position: "absolute",
-            top: `${helpNotifierPos.y + 20}px`,
-            left: `${helpNotifierPos.x + 20}px`,
-          }}
-          className="helpable-info"
-        >?</div>
-    : undefined}
+      <HelpNotifier></HelpNotifier>
       <AppPanel
         outerStyle={{
           height: "calc(100vh - 20px)",

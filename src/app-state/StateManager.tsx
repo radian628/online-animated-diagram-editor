@@ -2,7 +2,7 @@ import create from "zustand";
 import { RuntimeAppState, DrawFunction } from "./RuntimeState";
 import { AppStateParser } from "./State";
 
-export const useAppStore = create<RuntimeAppState>((set) => ({
+export const useAppStore = create<RuntimeAppState>((set, get) => ({
   state: {
     rootDrawableID: "",
     files: {
@@ -17,6 +17,17 @@ export const useAppStore = create<RuntimeAppState>((set) => ({
         type: "text/plain",
         data: "sdkfskdfhsdjkfh",
         tags: ["text", "tag2"]
+      },
+      c: {
+        name: "Text Component",
+        type: "application/prs.diagram",
+        data: JSON.stringify({
+          type: "js",
+          onUpdate: "ctx.fillText('hello world', width/2, height/2);",
+          onFixedUpdate: "",
+          fixedRefreshRate: 60
+        }),
+        tags: ["component"]
       },
     },
     tags: {}
@@ -47,8 +58,15 @@ export const useAppStore = create<RuntimeAppState>((set) => ({
     set({helpBoxMessage: message});
   },
 
-  helpNotifierPos: null,
-  setHelpNotifierPos: pos => {
-    set({ helpNotifierPos: pos });
+  helpNotifierData: null,
+  setHelpNotifierData: pos => {
+    set({ helpNotifierData: pos });
+  },
+
+  setFile: (id, contents) => {
+    let oldState = get();
+    set({ state: { ...oldState.state, files: { ...oldState.state.files, [id]: {
+      ...oldState.state.files[id], data: contents
+    } } }})
   }
 }));

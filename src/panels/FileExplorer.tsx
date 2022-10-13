@@ -2,8 +2,16 @@ import { useState } from "react";
 import { useAppStore } from "../app-state/StateManager";
 import { Helpable, StringInput } from "./Common";
 
+import "./FileExplorer.css"
+
 function zipper<A,B>(a: A[], b: (i: number) => B) {
   return a.map((e, i) => (i == a.length - 1) ? [e] : [e, b(i)]).flat(1);
+}
+
+const mimeTypeMap: Record<string, string> = {
+  "text/plain": "Plaintext",
+  "application/prs.diagram": "Diagram Component",
+  "text/javascript": "JavaScript Source"
 }
 
 export function FileExplorer() {
@@ -79,7 +87,7 @@ export function FileExplorer() {
                   : file.name
                 }</td>
                 
-                <td>{file.type}</td>
+                <td>{mimeTypeMap[file.type] ?? `Unknown: ${file.type}`}</td>
 
                 <td>{file.tags.map(tag => 
                   <span className={`file-tag${searchTags.indexOf(tag) == -1 ? "" : " highlighted"}`} key={tag}>{tag}</span>)

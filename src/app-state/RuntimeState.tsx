@@ -16,6 +16,8 @@ export type DrawFunctionArgs = {
 
 export type DrawFunction = (...args: any[]) => void;
 
+export type HelpNotifierData = { x: number, y: number, uuid: string, content: string | JSX.Element | JSX.Element[] }
+
 export type RuntimeAppState = {
   functionCache: Map<string, DrawFunction>
   state: AppState,
@@ -28,7 +30,8 @@ export type RuntimeAppState = {
 
   load: (preSerializationState: string) => void
 
-  helpNotifierPos: { x: number, y: number, uuid: string } | null
-  setHelpNotifierPos: (pos: { x: number, y: number, uuid: string } | null) => void
+  helpNotifierData: HelpNotifierData | null
+  setHelpNotifierData: (pos: HelpNotifierData | null) => void
 
+  setFile: (filename: string, contents: string) => void
 }

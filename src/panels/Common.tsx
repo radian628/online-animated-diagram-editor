@@ -31,8 +31,8 @@ export function Helpable(props: {
     state => [state.setHelpBoxMessage]
   );
 
-  const [helpNotifierPos, setHelpNotifierPos] = 
-    useAppStore(state => [state.helpNotifierPos, state.setHelpNotifierPos]);
+  const [helpNotifierData, setHelpNotifierData] = 
+    useAppStore(state => [state.helpNotifierData, state.setHelpNotifierData]);
 
   const [isMouseOver, setIsMouseOver] = useState(false);
 
@@ -40,9 +40,9 @@ export function Helpable(props: {
 
   useEffect(() => {
     return () => {
-      const helpNotifierPos = useAppStore.getState().helpNotifierPos;
-      if (helpNotifierPos && helpNotifierPos.uuid == uuid) {
-        setHelpNotifierPos(null);
+      const helpNotifierData = useAppStore.getState().helpNotifierData;
+      if (helpNotifierData && helpNotifierData.uuid == uuid) {
+        setHelpNotifierData(null);
       }
     }
   }, []);
@@ -57,9 +57,9 @@ export function Helpable(props: {
     
     const mousemove = (e: MouseEvent) => {
       if (isMouseOver) {
-        setHelpNotifierPos({ x: e.clientX, y: e.clientY, uuid });
-      } else if (helpNotifierPos && helpNotifierPos.uuid == uuid) {
-        setHelpNotifierPos(null);
+        setHelpNotifierData({ x: e.clientX, y: e.clientY, uuid, content: props.message });
+      } else if (helpNotifierData && helpNotifierData.uuid == uuid) {
+        setHelpNotifierData(null);
       }
     }
     document.addEventListener("mousemove", mousemove);

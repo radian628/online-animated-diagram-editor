@@ -44,7 +44,7 @@ export function Help(props: {
     return <Helpable
         message={<ul>
             <li>Click a help panel to select it.</li>
-            <li>Press <kbd>H</kbd> while hovering over something to see info about it in the selected help panel</li>
+            <li>Want to save a tooltip for later? Press <kbd>H</kbd> while hovering over something to see info about it in the selected help panel</li>
         </ul>}
     ><div
         className={`help-panel panel-root`}
@@ -53,9 +53,6 @@ export function Help(props: {
         }}
     >
         <h2>Help Panel</h2> 
-        {props.isActive 
-        ? <p>Press <kbd>H</kbd> while hovering over something to see info about it here! You can use this feature if you see a <span className="helpable-info">?</span> next to your mouse.</p>
-        : undefined}
         <br></br>
         <div className="help-box-content">
             {myHelpBoxMessage}
