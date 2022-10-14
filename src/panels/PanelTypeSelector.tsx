@@ -15,5 +15,6 @@ export function PanelTypeSelector(props: {
     <option value={SinglePanelType.HELP}>Help</option>
     <option value={SinglePanelType.CODE_EDITOR}>Code Editor</option>
     <option value={SinglePanelType.FILE_EXPLORER}>File Explorer</option>
+    <option value={SinglePanelType.DISPLAY}>Display</option>
   </select>
 }

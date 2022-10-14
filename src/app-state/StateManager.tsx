@@ -23,7 +23,7 @@ export const useAppStore = create<RuntimeAppState>((set, get) => ({
         type: "application/prs.diagram",
         data: JSON.stringify({
           type: "js",
-          onUpdate: "ctx.fillText(textContent, width/2, height/2);",
+          onUpdate: "ctx.fillText('hello world', width/2, height/2);",
           onFixedUpdate: "",
           fixedRefreshRate: 60,
           settings: [
@@ -35,6 +35,30 @@ export const useAppStore = create<RuntimeAppState>((set, get) => ({
         }),
         tags: ["component"]
       },
+      d: {
+        name: "Timeline",
+        type: "application/prs.timeline",
+        data: JSON.stringify({
+          type: "timeline",
+          timeline: [
+            {
+              drawables: [
+                {
+                  start: 0,
+                  end: 100,
+                  drawableID: "c"
+                },
+                {
+                  start: 150,
+                  end: 200,
+                  drawableID: "c"
+                },
+              ]
+            }
+          ]
+        }),
+        tags: []
+      }
     },
     tags: {}
   },

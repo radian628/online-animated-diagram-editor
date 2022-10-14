@@ -1,4 +1,5 @@
 import { CodeEditor } from "./panels/CodeEditor"
+import { Display } from "./panels/Display"
 import { FileExplorer } from "./panels/FileExplorer"
 import { Help } from "./panels/Help"
 import { Undecided } from "./panels/Undecided"
@@ -24,12 +25,14 @@ export function SingleAppPanel(props: {
   switch (props.type) {
     case SinglePanelType.UNDECIDED:
       return <Undecided></Undecided>
+    case SinglePanelType.DISPLAY:
+      return <Display></Display>
     case SinglePanelType.CODE_EDITOR:
       return <CodeEditor setIsActive={props.setIsActive} isActive={props.isActive}></CodeEditor>
     case SinglePanelType.FILE_EXPLORER:
       return <FileExplorer></FileExplorer>
-    case SinglePanelType.HELP:
-      return <Help setIsActive={props.setIsActive} isActive={props.isActive}></Help>
+      case SinglePanelType.HELP:
+        return <Help setIsActive={props.setIsActive} isActive={props.isActive}></Help>
     default:
       return <p>Error: This panel type is unimplemented!</p>
   }
