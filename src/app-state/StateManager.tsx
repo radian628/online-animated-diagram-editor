@@ -45,16 +45,30 @@ export const useAppStore = create<RuntimeAppState>((set, get) => ({
               drawables: [
                 {
                   start: 0,
-                  end: 100,
+                  end: 2,
                   drawableID: "c"
                 },
                 {
-                  start: 150,
-                  end: 200,
+                  start: 3,
+                  end: 5,
                   drawableID: "c"
                 },
               ]
-            }
+            },
+            {
+              drawables: [
+                {
+                  start: 1,
+                  end: 4,
+                  drawableID: "c"
+                },
+                {
+                  start: 4,
+                  end: 8,
+                  drawableID: "c"
+                },
+              ]
+            },
           ]
         }),
         tags: []
@@ -100,9 +114,9 @@ export const useAppStore = create<RuntimeAppState>((set, get) => ({
     } } }})
   },
 
-  activeCodeEditorUUID: "",
-  setActiveCodeEditorUUID: (uuid: string) => {
-    set({ activeCodeEditorUUID: uuid });
+  activeFileEditorUUID: "",
+  setActiveFileEditorUUID: (uuid: string) => {
+    set({ activeFileEditorUUID: uuid });
   },
   currentlyLoadedFileUUID: "",
   setCurrentlyLoadedFileUUID: (uuid: string) => {

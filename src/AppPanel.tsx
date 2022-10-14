@@ -137,7 +137,7 @@ export function AppPanel(props: {
   // keybind for adding a panel
   useEffect(() => {
     const keydown = (e: KeyboardEvent) => {
-      if (e.key == "=" && isPanelFocused && document.activeElement?.className == "app-panel-inner-single") {
+      if (e.key == "n" && isPanelFocused && document.activeElement?.className == "app-panel-inner-single") {
         setIsAdding(true);
       }
     }
@@ -343,7 +343,7 @@ export function AppPanel(props: {
               ></PanelTypeSelector>
 
               <Helpable
-                message={<p>Press this button to split this panel. This can also be done with the <kbd>=</kbd> key.</p>}
+                message={<p>Press this button to split this panel. This can also be done with the <kbd>N</kbd> key.</p>}
               >       
                 <button onClick={() => {
                   setIsAdding(true);

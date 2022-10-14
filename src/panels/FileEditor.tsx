@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { v4 } from 'uuid';
 import { useAppStore } from '../app-state/StateManager';
-import { DiagramComponentCodeEditor } from './code-editor-subtypes/DiagramComponentCodeEditor';
-import { DefaultCodeEditor } from "./code-editor-subtypes/DefaultCodeEditor";
+import { DiagramComponentCodeEditor } from './file-editor-subtypes/DiagramComponentCodeEditor';
+import { DefaultCodeEditor } from "./file-editor-subtypes/DefaultCodeEditor";
+import { TimelineEditor } from './file-editor-subtypes/TimelineEditor';
 
 export function CodeEditor(props: {
   isActive: boolean,
@@ -10,11 +11,11 @@ export function CodeEditor(props: {
 }) {
 
   const [
-    activeCodeEditorUUID, setActiveCodeEditorUUID, 
+    activeFileEditorUUID, setActiveFileEditorUUID, 
     currentlyLoadedFileUUID, setCurrentlyLoadedFileUUID,
     files
   ] = useAppStore(state => [
-    state.activeCodeEditorUUID, state.setActiveCodeEditorUUID,
+    state.activeFileEditorUUID, state.setActiveFileEditorUUID,
     state.currentlyLoadedFileUUID, state.setCurrentlyLoadedFileUUID,
     state.state.files
   ]);
@@ -25,25 +26,25 @@ export function CodeEditor(props: {
   useEffect(() => {
     if (isNew) {
       setIsNew(false);
-      setActiveCodeEditorUUID(uuid);
+      setActiveFileEditorUUID(uuid);
     }
   }, []);
 
   const [idOfFileBeingEdited, setIdOfFileBeingEdited] = useState<string>("");
 
   useEffect(() => {
-    if (activeCodeEditorUUID == uuid) {
+    if (activeFileEditorUUID == uuid) {
       setIdOfFileBeingEdited(currentlyLoadedFileUUID);
     }
   }, [currentlyLoadedFileUUID]);
   
   useEffect(() => {
-    if (activeCodeEditorUUID == uuid) {
+    if (activeFileEditorUUID == uuid) {
       props.setIsActive(true);
     } else {
       props.setIsActive(false);
     }
-  }, [activeCodeEditorUUID])
+  }, [activeFileEditorUUID])
 
   let editor: JSX.Element = <p>Unable to open: Unknown file type.</p>;
   let file = files[idOfFileBeingEdited];
@@ -54,6 +55,9 @@ export function CodeEditor(props: {
         uuid={idOfFileBeingEdited}
       ></DiagramComponentCodeEditor>
       break;
+    case "application/prs.timeline":
+      editor = <TimelineEditor uuid={idOfFileBeingEdited}></TimelineEditor>
+      break;
     default:
       editor = <DefaultCodeEditor
       uuid={idOfFileBeingEdited}
@@ -63,7 +67,7 @@ export function CodeEditor(props: {
 
   return <div
     onClick={() => {
-      setActiveCodeEditorUUID(uuid);
+      setActiveFileEditorUUID(uuid);
     }}
   >
     {(idOfFileBeingEdited === "" ) 

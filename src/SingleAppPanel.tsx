@@ -1,4 +1,4 @@
-import { CodeEditor } from "./panels/CodeEditor"
+import { CodeEditor } from "./panels/FileEditor"
 import { Display } from "./panels/Display"
 import { FileExplorer } from "./panels/FileExplorer"
 import { Help } from "./panels/Help"
@@ -6,7 +6,7 @@ import { Undecided } from "./panels/Undecided"
 
 export enum SinglePanelType {
   UNDECIDED, 
-  CODE_EDITOR,
+  FILE_EDITOR,
   FILE_EXPLORER,
   TIMELINE,
   DISPLAY,
@@ -27,7 +27,7 @@ export function SingleAppPanel(props: {
       return <Undecided></Undecided>
     case SinglePanelType.DISPLAY:
       return <Display></Display>
-    case SinglePanelType.CODE_EDITOR:
+    case SinglePanelType.FILE_EDITOR:
       return <CodeEditor setIsActive={props.setIsActive} isActive={props.isActive}></CodeEditor>
     case SinglePanelType.FILE_EXPLORER:
       return <FileExplorer></FileExplorer>

@@ -33,8 +33,8 @@ export type RuntimeAppState = {
 
   setFile: (filename: string, contents: string) => void
 
-  activeCodeEditorUUID: string,
-  setActiveCodeEditorUUID: (uuid: string) => void
+  activeFileEditorUUID: string,
+  setActiveFileEditorUUID: (uuid: string) => void
   currentlyLoadedFileUUID: string,
   setCurrentlyLoadedFileUUID: (uuid: string) => void
 }

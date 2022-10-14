@@ -11,7 +11,8 @@ function zipper<A,B>(a: A[], b: (i: number) => B) {
 const mimeTypeMap: Record<string, string> = {
   "text/plain": "Plaintext",
   "application/prs.diagram": "Diagram Component",
-  "text/javascript": "JavaScript Source"
+  "text/javascript": "JavaScript Source",
+  "application/prs.timeline": "Timeline"
 }
 
 export function FileExplorer() {
