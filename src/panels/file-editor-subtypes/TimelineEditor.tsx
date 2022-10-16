@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { AppState, Timeline, TimelineParser } from "../../app-state/State";
 import { useAppStore } from "../../app-state/StateManager";
 import { PanelDirection } from "../../AppPanel";
-import { arraySet, ResizeSeparator, useElemSize } from "../Common";
+import { arraySet, ResizeSeparator, useElemSize, useMouseDown } from "../Common";
 
 import "./TimelineEditor.css";
 
@@ -131,9 +131,23 @@ function TimelineTime(props: { time: number, style?: React.CSSProperties }) {
 export function TimelineNumbers(props: {
   start: number,
   end: number,
+  setCurrentTime: (time: number) => void
+  parentLeft?: number,
+  timelineDuration: number,
 }) {
 
   const [ref, rect] = useElemSize<HTMLDivElement>();
+
+  const isMouseDown = useMouseDown(ref, changeTime, true);
+
+  const durationFactor = props.timelineDuration / (props.end - props.start);
+
+  function changeTime(e: MouseEvent) {
+    console.log("changed time")
+    if (!(e.currentTarget instanceof HTMLElement) || !rect) return;
+    console.log(rect.left);
+    props.setCurrentTime((e.clientX - rect.left) / rect.width * durationFactor * (props.end - props.start));
+  }
 
   const numbers: JSX.Element[] = [];
 
@@ -146,13 +160,20 @@ export function TimelineNumbers(props: {
         style={{
           position: "absolute",
           top: "0px",
-          left: `${(i) / (props.end - props.start) * rect.width}px`
+          left: `${(i) / (props.end - props.start) * rect.width / durationFactor}px`
         }}
       ></TimelineTime>)
     }
   }
 
-  return <div className="timeline-numbers" ref={ref}>
+  return <div className="timeline-numbers" ref={ref}
+    onMouseMove={e => {
+      if (isMouseDown) changeTime(e.nativeEvent);
+    }}
+    style={{
+      width: `${100 * durationFactor }%`
+    }}
+  >
     {numbers}
   </div>
 }
@@ -183,6 +204,14 @@ export function TimelineEditor(props: { uuid: string }) {
 
   const [timelineEditorRef, timelineEditorRect] = useElemSize<HTMLDivElement>();
 
+  const [currentTime, setCurrentTime] = useState(0);
+
+  const timelinePixelHeight = (parsedFile.timeline
+    .map(t => t.track)
+    .reduce((prev, cur) => Math.max(prev, cur), -Infinity) + 2)
+    * 50 + 20;
+
+
   return <div>
     <h1>Editing '{file.name}'</h1>
     <div 
@@ -191,14 +220,8 @@ export function TimelineEditor(props: { uuid: string }) {
       className="timeline"
       style={{
         height: `${
-          (parsedFile.timeline
-            .map(t => t.track)
-            .reduce((prev, cur) => Math.max(prev, cur), -Infinity) + 2)
-            * 50 + 20
+          timelinePixelHeight
         }px`
-      }}
-      onMouseMove={e => {
-        setMousePos([e.clientX, e.clientY]);
       }}
       onKeyDown={e => {
 
@@ -230,6 +253,10 @@ export function TimelineEditor(props: { uuid: string }) {
       <TimelineNumbers
         start={scrollLeft}
         end={scrollLeft + range}
+        setCurrentTime={setCurrentTime}
+        timelineDuration={parsedFile.timeline
+          .map(t => t.end)
+          .reduce((a, b) => Math.max(a, b), 0)}
       ></TimelineNumbers>
       {parsedFile.timeline.map((clip, i) => {
         return <TimelineClip
@@ -246,6 +273,14 @@ export function TimelineEditor(props: { uuid: string }) {
           }}
         ></TimelineClip>
       })}
+      <div style={{
+        borderRight: "1px solid black",
+        position: "absolute",
+        top: "0px",
+        left: `${currentTime / range * (timelineEditorRect?.width ?? 0)}px`,
+        height: `${timelinePixelHeight}px`,
+        zIndex: 1000
+      }}></div>
     </div>
   </div>
 }

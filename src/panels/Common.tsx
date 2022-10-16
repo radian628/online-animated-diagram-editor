@@ -199,3 +199,33 @@ export function ResizeSeparator(props: {
 }
 
 
+
+
+export function useMouseDown(elemRef: React.RefObject<HTMLElement>, callback?: (e: MouseEvent) => void, appliesToChildren: boolean = true) {
+  const [isMouseDown, setIsMouseDown] = useState(false);
+
+  useEffect(() => {
+    const mousedown = (e: MouseEvent) => {
+      if (!appliesToChildren && e.currentTarget !== e.target) return;
+      if (callback) callback(e);
+      setIsMouseDown(true);
+    }
+
+    const mouseup = (e: MouseEvent) => {
+      setIsMouseDown(false);
+    }
+
+    if (!elemRef.current) return;
+
+    elemRef.current.addEventListener("mousedown", mousedown);
+    document.addEventListener("mouseup", mouseup);
+
+    return () => {
+      if (!elemRef.current) return;
+      elemRef.current.removeEventListener("mousedown", mousedown);
+      document.removeEventListener("mouseup", mouseup);  
+    }
+  }, []);
+
+  return isMouseDown;
+}

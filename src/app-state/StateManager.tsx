@@ -118,4 +118,9 @@ export const useAppStore = create<RuntimeAppState>((set, get) => ({
   setCurrentlyLoadedFileUUID: (uuid: string) => {
     set({ currentlyLoadedFileUUID: uuid });
   },
+
+  currentTimelineTime: 0,
+  setCurrentTimelineTime: (time: number) => {
+    set({ currentTimelineTime: time })
+  }
 }));

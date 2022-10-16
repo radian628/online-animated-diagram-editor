@@ -30,9 +30,13 @@
 
 .timeline-numbers {
   will-change: transform;
-  width: 100%;
+  left: 0px;
+  right: 0px;
   position: fixed;
   z-index: 3;
+  height: 20px; 
+  user-select: none;
+  background: #dddddd;
 }
 
 .timeline-time {

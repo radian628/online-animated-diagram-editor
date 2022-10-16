@@ -37,4 +37,7 @@ export type RuntimeAppState = {
   setActiveFileEditorUUID: (uuid: string) => void
   currentlyLoadedFileUUID: string,
   setCurrentlyLoadedFileUUID: (uuid: string) => void
+
+  currentTimelineTime: number,
+  setCurrentTimelineTime: (time: number) => void
 }
