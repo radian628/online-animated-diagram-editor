@@ -109,15 +109,15 @@ export function TimelineClip(props: {
 
 
 function TimelineTime(props: { time: number, style?: React.CSSProperties }) {
-  if (props.time < 60) return <span style={props.style}>{
+  if (props.time < 60) return <span className="timeline-time" style={props.style}>{
     Math.floor(props.time * 100 + 0.00000001) / 100
   }s</span>
-  if (props.time < 3600) return <span style={props.style}>{
+  if (props.time < 3600) return <span className="timeline-time"  style={props.style}>{
     Math.floor(props.time / 60)
   }m{
     Math.floor(props.time * 100 + 0.00000001) / 100 % 60
   }s</span>
-  return <span style={props.style}>{
+  return <span className="timeline-time"  style={props.style}>{
     Math.floor(props.time / 3600)
   }h{
     Math.floor(props.time / 60) % 60

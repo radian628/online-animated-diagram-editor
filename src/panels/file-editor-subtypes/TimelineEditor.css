@@ -34,3 +34,7 @@
   position: fixed;
   z-index: 3;
 }
+
+.timeline-time {
+  overflow: visible;
+}
