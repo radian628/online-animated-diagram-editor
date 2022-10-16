@@ -12,16 +12,15 @@ type TimelineClip = Timeline["timeline"][number];
 
 export function TimelineClip(props: {
   clip: TimelineClip,
-  right: number,
-  left: number,
+  range: number
   files: AppState["files"],
   trackWidth: number,
   trackYOffset: number,
   setClip: (clip: TimelineClip) => void
 }) {
-  let range = props.right - props.left;
-  let clipStart = (props.clip.start - Math.min(0, props.left)) / range;
-  let clipEnd = (props.clip.end - Math.min(0, props.left)) / range;
+  let range = props.range
+  let clipStart = (props.clip.start) / range;
+  let clipEnd = (props.clip.end) / range;
   
   let [isMouseDown, setIsMouseDown] = useState(false);
 
@@ -64,7 +63,7 @@ export function TimelineClip(props: {
       position: "absolute",
       left: `${clipStart * 100}%`,
       width: `${(clipEnd - clipStart) * 100}%`,
-      top: `${props.clip.track * 50}px`,
+      top: `${props.clip.track * 50 + 20}px`,
       willChange: "transform"
     }}
     className="clip"
@@ -109,17 +108,65 @@ export function TimelineClip(props: {
 
 
 
+function TimelineTime(props: { time: number, style?: React.CSSProperties }) {
+  if (props.time < 60) return <span style={props.style}>{
+    Math.floor(props.time * 100 + 0.00000001) / 100
+  }s</span>
+  if (props.time < 3600) return <span style={props.style}>{
+    Math.floor(props.time / 60)
+  }m{
+    Math.floor(props.time * 100 + 0.00000001) / 100 % 60
+  }s</span>
+  return <span style={props.style}>{
+    Math.floor(props.time / 3600)
+  }h{
+    Math.floor(props.time / 60) % 60
+  }m{
+    Math.floor(props.time * 100 + 0.00000001) / 100 % 60
+  }s</span>;
+}
+
+
+
+export function TimelineNumbers(props: {
+  start: number,
+  end: number,
+}) {
+
+  const [ref, rect] = useElemSize<HTMLDivElement>();
+
+  const numbers: JSX.Element[] = [];
+
+  if (rect) {
+    let step = props.end - props.start;
+    step = 10 ** Math.floor(Math.log10(step / 1.5));
+    for (let i = Math.floor(props.start / step) * step; i < props.end; i += step) {
+      numbers.push(<TimelineTime
+        time={i}
+        style={{
+          position: "absolute",
+          top: "0px",
+          left: `${(i) / (props.end - props.start) * rect.width}px`
+        }}
+      ></TimelineTime>)
+    }
+  }
+
+  return <div className="timeline-numbers" ref={ref}>
+    {numbers}
+  </div>
+}
+
+
 
 
 export function TimelineEditor(props: { uuid: string }) {
   const [files, setFile] = useAppStore(state => [state.state.files, state.setFile]);
   const file = files[props.uuid];
 
-  const [left, setLeft] = useState(0);
-  const [right, setRight] = useState(4);
+  const [range, setRange] = useState(4);
   const [scrollLeft, setScrollLeft] = useState(0);
   
-  const [recentlyWheeled, setRecentlyWheeled] = useState(false)
 
   if (!file) {
       return <p>Error: File does not exist.</p>
@@ -147,48 +194,49 @@ export function TimelineEditor(props: { uuid: string }) {
           (parsedFile.timeline
             .map(t => t.track)
             .reduce((prev, cur) => Math.max(prev, cur), -Infinity) + 2)
-            * 50
+            * 50 + 20
         }px`
       }}
       onMouseMove={e => {
         setMousePos([e.clientX, e.clientY]);
       }}
       onKeyDown={e => {
+
         let rect = e.currentTarget.getBoundingClientRect();
+        let scrollLeftTimeSpace = e.currentTarget.scrollLeft / rect.width * range;
         let x = (mousePos[0] - rect.left) / rect.width;
-        let weightedCenter = left + (right - left) * x;
+        let weightedCenter = scrollLeftTimeSpace + range * x;
         if (e.key != "=" && e.key != "-") return;
         let delta = (e.key == "=") ? -1 : 1;
         let factor = (delta * 0.3 + 1);
-        let newleft = weightedCenter + (left - weightedCenter) * factor;
-        let newright = weightedCenter + (right - weightedCenter) * factor;
-        if (newleft < 0) {
-          newright -= newleft;
-          newleft -= newleft;
-        }
-        setLeft(newleft);
-        setRight(newright);
 
-        let newLeftScroll = (newleft / (newright - newleft) * rect.width);
-        e.currentTarget.scrollLeft = Math.max(0, newLeftScroll);
-        setScrollLeft(e.currentTarget.scrollLeft);
+        setRange(factor * range);
+
+        const newScrollLeft = Math.max(
+          weightedCenter + (scrollLeftTimeSpace - weightedCenter) * factor,
+          0
+        );
+
+        setScrollLeft(newScrollLeft);
+        e.currentTarget.scrollLeft = newScrollLeft / (factor * range) * rect.width;
+
         return false;
       }}
       onScroll={e => {
         let width = e.currentTarget.getBoundingClientRect().width;
-        const delta = e.currentTarget.scrollLeft - scrollLeft;
-        setScrollLeft(e.currentTarget.scrollLeft);
-        setLeft(left + delta / width * (right - left));
-        setRight(right + delta / width * (right - left));
+        setScrollLeft(e.currentTarget.scrollLeft / width * range);
       }}
     >
+      <TimelineNumbers
+        start={scrollLeft}
+        end={scrollLeft + range}
+      ></TimelineNumbers>
       {parsedFile.timeline.map((clip, i) => {
         return <TimelineClip
           trackWidth={timelineEditorRect?.width ?? 1000}
           trackYOffset={timelineEditorRect?.top ?? 0}
           clip={clip}
-          left={left}
-          right={right}
+          range={range}
           files={files}
           setClip={clip2 => {
             setFile(props.uuid, JSON.stringify({
