@@ -1,5 +1,5 @@
 import { DrawFunction, DrawFunctionArgs } from "../app-state/RuntimeState";
-import { JSDrawable } from "../app-state/State";
+import { AppState, DrawableParser, JSDrawable, JSDrawableParser, Timeline } from "../app-state/State";
 
 type Zeroed<T> = { [K in keyof T]: 0 };
 
@@ -195,3 +195,36 @@ export function callDrawFunction(
     fixed
   });
 }
+
+export function createTimelineInvocationContext(
+  timeline: Timeline, 
+  start: number, 
+  end: number,
+  files: AppState["files"]
+): TimelineInvocationContext {
+  return {
+    start, end,
+    drawFunctions: timeline.timeline
+      .map(item => {
+        const file = files[item.drawableID];
+        if (!file) {
+          throw new Error(`File '${file}' does not exist.`);
+        }
+        const maybeParsedFile = JSDrawableParser.safeParse(file);
+        if (!maybeParsedFile.success) {
+          throw new Error(`File '${file}' is in the wrong format.`);
+        }
+        const parsedFile = maybeParsedFile.data;
+        const updateFunctions = createDrawFunction(parsedFile);
+        return {
+          ...updateFunctions,
+          start: item.start,
+          end: item.end,
+          fixedStateCache: [],
+          fixedUpdateFPS: parsedFile.fixedRefreshRate 
+        }
+      })
+  }
+}
+
+

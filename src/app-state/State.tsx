@@ -22,11 +22,10 @@ export type AppState = z.infer<typeof AppStateParser>;
 export const TimelineParser = z.object({
   type: z.literal("timeline"),
   timeline: z.array(z.object({
-    drawables: z.array(z.object({
-      start: z.number(),
-      end: z.number(),
-      drawableID: z.string()
-    }))
+    start: z.number(),
+    end: z.number(),
+    track: z.number().refine(x => Math.round(x) == x),
+    drawableID: z.string()
   }))
 });
 export type Timeline = z.infer<typeof TimelineParser>;

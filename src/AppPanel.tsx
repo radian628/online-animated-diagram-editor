@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { IoAdd, IoClose, IoCaretBack, IoCaretForward, IoCaretUp, IoCaretDown } from "react-icons/io5";
-import { Helpable } from "./panels/Common";
+import { Helpable, ResizeSeparator } from "./panels/Common";
 import { PanelTypeSelector } from "./panels/PanelTypeSelector";
 import { SingleAppPanel, SingleAppPanelState, SinglePanelType } from "./SingleAppPanel";
 import { v4 as uuidv4 } from "uuid";
@@ -39,70 +39,6 @@ let counter = 5;
 function makeKey() {
   return "key" + counter++;
 }
-
-let mouseX = 0;
-let mouseY = 0;
-
-document.addEventListener("mousemove", (e) => {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-});
-
-export function ResizeSeparator(props: {
-  onMove: (delta: number) => void;
-  direction: PanelDirection;
-}) {
-  const [lastMousePos, setLastMousePos] = useState<[number, number]>([0, 0]);
-
-  useEffect(() => {
-    const mousemove = (e: MouseEvent) => {
-      if (isMouseDown) {
-        if (props.direction == PanelDirection.HORIZONTAL) {
-          props.onMove(mouseX - lastMousePos[0]);
-        } else {
-          props.onMove(mouseY - lastMousePos[1]);
-        }
-        setLastMousePos([mouseX, mouseY]);
-      }
-    };
-    const mouseup = (e: MouseEvent) => {
-      if (e.button == 0) {
-        (document.querySelector(".App") as HTMLDivElement).style.userSelect =
-          "";
-        setIsMouseDown(false);
-      }
-    };
-
-    window.addEventListener("mousemove", mousemove);
-    window.addEventListener("mouseup", mouseup);
-
-    return () => {
-      window.removeEventListener("mousemove", mousemove);
-      window.removeEventListener("mouseup", mouseup);
-    };
-  });
-
-  const [isMouseDown, setIsMouseDown] = useState(false);
-  return (
-    <div
-      onMouseDown={(e) => {
-        if (e.button == 0) {
-          setIsMouseDown(true);
-          setLastMousePos([mouseX, mouseY]);
-          (document.querySelector(".App") as HTMLDivElement).style.userSelect =
-            "none";
-        }
-      }}
-      className={`resize-separator ${
-        props.direction == PanelDirection.VERTICAL
-          ? "resize-vertical"
-          : "resize-horizontal"
-      }`}
-    ></div>
-  );
-}
-
-
 
 
 

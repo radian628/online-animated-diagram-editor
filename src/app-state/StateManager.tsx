@@ -42,32 +42,28 @@ export const useAppStore = create<RuntimeAppState>((set, get) => ({
           type: "timeline",
           timeline: [
             {
-              drawables: [
-                {
-                  start: 0,
-                  end: 2,
-                  drawableID: "c"
-                },
-                {
-                  start: 3,
-                  end: 5,
-                  drawableID: "c"
-                },
-              ]
+              start: 0,
+              end: 2,
+              drawableID: "c",
+              track: 0
             },
             {
-              drawables: [
-                {
-                  start: 1,
-                  end: 4,
-                  drawableID: "c"
-                },
-                {
-                  start: 4,
-                  end: 8,
-                  drawableID: "c"
-                },
-              ]
+              start: 3,
+              end: 5,
+              drawableID: "c",
+              track: 0
+            },
+            {
+              start: 1,
+              end: 4,
+              drawableID: "c",
+              track: 1
+            },
+            {
+              start: 4,
+              end: 8,
+              drawableID: "c",
+              track: 1
             },
           ]
         }),

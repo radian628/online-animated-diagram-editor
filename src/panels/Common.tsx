@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAppStore } from "../app-state/StateManager";
 import { v4 as uuidv4 } from "uuid";
+import { PanelDirection } from "../AppPanel";
 
 export function removeAttribs<T, K extends (keyof T)[]>(obj: T, ...props: K): Omit<T, K[number]> {
   let objCopy = { ...obj };
@@ -98,3 +99,103 @@ export function Helpable(props: {
     {props.children}
   </div>
 }
+
+
+
+
+export function arraySet<T>(arr: T[], i: number, newVal: T) {
+  return arr.map((e, j) => (i == j) ? newVal : e);
+}
+
+export function useElemSize<T extends HTMLElement>() {
+  const ref = React.createRef<T>();
+  const [rect, setRect] = useState<DOMRect | null>(null);
+
+  useEffect(() => {
+    if (!rect) {
+      const rect = ref.current?.getBoundingClientRect() ?? null;
+      setRect(rect);
+    }
+    if (!ref.current) return;
+    const observer = new ResizeObserver(() => {
+      const rect = ref.current?.getBoundingClientRect() ?? null;
+      setRect(rect);
+    });
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  });
+
+
+  return [ref,rect] as const;
+}
+
+
+
+
+
+let mouseX = 0;
+let mouseY = 0;
+
+document.addEventListener("mousemove", (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+});
+
+
+
+export function ResizeSeparator(props: {
+  onMove: (delta: number) => void;
+  direction: PanelDirection;
+  isAtStart?: boolean;
+}) {
+
+  useEffect(() => {
+    const mousemove = (e: MouseEvent) => {
+      if (isMouseDown) {
+        if (props.direction == PanelDirection.HORIZONTAL) {
+          props.onMove(e.movementX);
+        } else {
+          props.onMove(e.movementY);
+        }
+      }
+    };
+    const mouseup = (e: MouseEvent) => {
+      if (e.button == 0) {
+        (document.querySelector(".App") as HTMLDivElement).style.userSelect =
+          "";
+        setIsMouseDown(false);
+      }
+    };
+
+    window.addEventListener("mousemove", mousemove);
+    window.addEventListener("mouseup", mouseup);
+
+    return () => {
+      window.removeEventListener("mousemove", mousemove);
+      window.removeEventListener("mouseup", mouseup);
+    };
+  });
+
+  const [isMouseDown, setIsMouseDown] = useState(false);
+  return (
+    <div
+      onMouseDown={(e) => {
+        if (e.button == 0) {
+          setIsMouseDown(true);
+          (document.querySelector(".App") as HTMLDivElement).style.userSelect =
+            "none";
+        }
+      }}
+      className={`resize-separator ${
+        props.direction == PanelDirection.VERTICAL
+          ? "resize-vertical"
+          : "resize-horizontal"
+      }`}
+      style={props.isAtStart ? {
+        left: "0"
+      } : {}}
+    ></div>
+  );
+}
+
+
