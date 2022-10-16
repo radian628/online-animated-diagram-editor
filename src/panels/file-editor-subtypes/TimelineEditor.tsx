@@ -1,8 +1,17 @@
 import { useEffect, useState } from "react";
-import { TimelineParser } from "../../app-state/State";
+import { Timeline, TimelineParser } from "../../app-state/State";
 import { useAppStore } from "../../app-state/StateManager";
 
 import "./TimelineEditor.css";
+
+
+export function TimelineTrack(props: {
+  track: Timeline["timeline"]
+}) {
+
+}
+
+
 
 export function TimelineEditor(props: { uuid: string }) {
   const [files, setFile] = useAppStore(state => [state.state.files, state.setFile]);
@@ -69,6 +78,7 @@ export function TimelineEditor(props: { uuid: string }) {
               let clipStart = (drawable.start - Math.min(0, left)) / range;
               let clipEnd = (drawable.end - Math.min(0, left)) / range;
               return <div
+                draggable={true}
                 style={{
                   position: "absolute",
                   left: `${clipStart * 100}%`,
