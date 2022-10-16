@@ -210,7 +210,7 @@ export function createTimelineInvocationContext(
         if (!file) {
           throw new Error(`File '${file}' does not exist.`);
         }
-        const maybeParsedFile = JSDrawableParser.safeParse(file);
+        const maybeParsedFile = JSDrawableParser.safeParse(JSON.parse(file.data));
         if (!maybeParsedFile.success) {
           throw new Error(`File '${file}' is in the wrong format.`);
         }

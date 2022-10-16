@@ -40,4 +40,6 @@ export type RuntimeAppState = {
 
   currentTimelineTime: number,
   setCurrentTimelineTime: (time: number) => void
+  currentDisplayTimelineUUID: string,
+  setCurrentDisplayTimelineUUID: (uuid: string) => void
 }

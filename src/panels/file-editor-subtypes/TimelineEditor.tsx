@@ -153,7 +153,7 @@ export function TimelineNumbers(props: {
 
   if (rect) {
     let step = props.end - props.start;
-    step = 10 ** Math.floor(Math.log10(step / 1.5));
+    step = 10 ** Math.floor(Math.log10(step / 3.5));
     for (let i = Math.floor(props.start / step) * step; i < props.end; i += step) {
       numbers.push(<TimelineTime
         time={i}
@@ -182,7 +182,8 @@ export function TimelineNumbers(props: {
 
 
 export function TimelineEditor(props: { uuid: string }) {
-  const [files, setFile] = useAppStore(state => [state.state.files, state.setFile]);
+  const [files, setFile, setCurrentTimelineTime] = 
+    useAppStore(state => [state.state.files, state.setFile, state.setCurrentTimelineTime]);
   const file = files[props.uuid];
 
   const [range, setRange] = useState(4);
@@ -253,7 +254,10 @@ export function TimelineEditor(props: { uuid: string }) {
       <TimelineNumbers
         start={scrollLeft}
         end={scrollLeft + range}
-        setCurrentTime={setCurrentTime}
+        setCurrentTime={time => {
+          setCurrentTime(time);
+          setCurrentTimelineTime(time);
+        }}
         timelineDuration={parsedFile.timeline
           .map(t => t.end)
           .reduce((a, b) => Math.max(a, b), 0)}
