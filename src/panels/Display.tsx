@@ -12,15 +12,23 @@ export function Display() {
 
     const [cachedTimelineState, setCachedTimelineState] = useState<TimelineInvocationContext | undefined>();
 
+    const [err, setErr] = useState("");
+
     useEffect(() => {
         const file = files[currentDisplayTimelineUUID];
         if (!file) throw new Error("Timeline does not exist.");
         const maybeParsedFile = TimelineParser.safeParse(JSON.parse(file.data));
         if (!maybeParsedFile.success) throw new Error("Invalid timeline format.");
         const parsedFile = maybeParsedFile.data;
-        console.log(parsedFile);
-        setCachedTimelineState(createTimelineInvocationContext(parsedFile, 0, 8, files));
-    }, [currentDisplayTimelineUUID]);
+        let failed = false;
+        try {
+            setCachedTimelineState(createTimelineInvocationContext(parsedFile, 0, 8, files));
+        } catch (err) {
+            failed = true;
+            setErr((err as Error)?.message);
+        }
+        if (!failed) setErr("");
+    }, [currentDisplayTimelineUUID, files]);
 
     useEffect(() => {
         if (!canvasRef.current) return;
@@ -28,8 +36,15 @@ export function Display() {
 
         if (!cachedTimelineState) return;
         c.getContext("2d")?.clearRect(0, 0, c.width, c.height);
-        drawTimeline(cachedTimelineState, c, time);
+        try {
+            drawTimeline(cachedTimelineState, c, time);
+        } catch (err) {
+            setErr("Render failed:" + (err as Error)?.message);
+        }
     });
 
-    return <canvas ref={canvasRef}></canvas>
+    return <div>
+        <p>{err}</p>
+        <canvas ref={canvasRef}></canvas>
+    </div>
 }

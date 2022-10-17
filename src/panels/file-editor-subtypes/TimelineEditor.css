@@ -42,3 +42,21 @@
 .timeline-time {
   overflow: visible;
 }
+
+
+.timeline-play-button {
+  background: black;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+.timeline-pause-button {
+  background: black;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}

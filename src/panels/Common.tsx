@@ -229,3 +229,34 @@ export function useMouseDown(elemRef: React.RefObject<HTMLElement>, callback?: (
 
   return isMouseDown;
 }
+
+
+
+
+export function useAnimationFrame<T extends readonly any[]>(
+  callback: (updatedState: T, time: number) => void,
+  dependencies: T
+) {
+  const animationRef = React.useRef<number>(0);
+
+  const dependenciesRef = React.useRef<T>();
+  dependenciesRef.current = dependencies;
+
+  const [timeElapsedOffset, setTimeElapsedOffset] = useState(0);
+  const timeElapsed = React.useRef(0);
+
+  const animate = (time: number) => {
+    timeElapsed.current = time;
+    if (dependenciesRef.current) callback(dependenciesRef.current, time - timeElapsedOffset);
+    animationRef.current = requestAnimationFrame(animate);
+  }
+
+  useEffect(() => {
+    animationRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationRef.current);
+  });
+
+  return () => {
+    setTimeElapsedOffset(timeElapsed.current);
+  }
+}

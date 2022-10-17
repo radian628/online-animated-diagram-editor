@@ -8,13 +8,41 @@ import { SinglePanelType } from './SingleAppPanel';
 function App() {
   const [data, setData] = useState<Panel>({
     type: PanelType.MULTIPLE,
-    direction: PanelDirection.HORIZONTAL,
-    children: [{
-      type: PanelType.SINGLE,
-      key: "0",
-      panel: { type: SinglePanelType.UNDECIDED },
-      size: 600
-    }],
+    direction: PanelDirection.VERTICAL,
+    children: [
+      {
+        type: PanelType.MULTIPLE,
+        key: "0",
+        size: 400,
+        direction: PanelDirection.HORIZONTAL,
+        children: [
+          {
+            type: PanelType.SINGLE,
+            key: "0",
+            panel: { type: SinglePanelType.FILE_EXPLORER },
+            size: 200
+          },
+          {
+            type: PanelType.SINGLE,
+            key: "1",
+            panel: { type: SinglePanelType.DISPLAY },
+            size: 200
+          },
+          {
+            type: PanelType.SINGLE,
+            key: "2",
+            panel: { type: SinglePanelType.FILE_EDITOR },
+            size: 200
+          },
+        ]
+      },
+      {
+        type: PanelType.SINGLE,
+        key: "1",
+        panel: { type: SinglePanelType.FILE_EDITOR },
+        size: 200
+      },
+    ],
     size: 600,
     key: "0"
   })
