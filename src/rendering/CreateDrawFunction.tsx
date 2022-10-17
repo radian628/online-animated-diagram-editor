@@ -118,7 +118,8 @@ export type DrawFunctionInvocationContext = {
   fixedUpdate: Function,
   fixedUpdateFPS: number,
   start: number,
-  end: number
+  end: number,
+  settings: Record<string, any>
 }
 
 export type TimelineInvocationContext = {
@@ -165,6 +166,7 @@ export function callDrawFunction(
         }
       },
       prev: context.fixedStateCache[context.fixedStateCache.length - 1],
+      ...context.settings
     });
     if (!calledNext) {
       context.fixedStateCache.push(undefined);
@@ -192,7 +194,8 @@ export function callDrawFunction(
     height: canvas.height,
     time: currentTime - context.start,
     duration: context.end - context.start,
-    fixed
+    fixed,
+    ...context.settings
   });
 }
 
@@ -221,7 +224,8 @@ export function createTimelineInvocationContext(
           start: item.start,
           end: item.end,
           fixedStateCache: [],
-          fixedUpdateFPS: parsedFile.fixedRefreshRate 
+          fixedUpdateFPS: parsedFile.fixedRefreshRate,
+          settings: item.settings
         }
       })
   }

@@ -24,14 +24,21 @@ export const useAppStore = create<RuntimeAppState>((set, get) => ({
         type: "application/prs.diagram",
         data: JSON.stringify({
           type: "js",
-          onUpdate: "ctx.fillText(textContent, width/2, height/2);",
+          onUpdate: `ctx.font = fontSize + 'px ' + fontType;
+ctx.fillStyle = fontColor;
+ctx.fillText(textContent, x, y);`,
           onFixedUpdate: "",
           fixedRefreshRate: 60,
           settings: [
             {
               type: "string",
               varName: "textContent"
-            }
+            },
+            { type: "number", varName: "x" },
+            { type: "number", varName: "y" },
+            { type: "number", varName: "fontSize" },
+            { type: "string", varName: "fontType" },
+            { type: "string", varName: "fontColor" },
           ]
         }),
         tags: ["component"]

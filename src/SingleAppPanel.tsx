@@ -12,7 +12,8 @@ export enum SinglePanelType {
   TIMELINE,
   DISPLAY,
   HELP,
-  CLIP_EDITOR
+  CLIP_EDITOR,
+  EXPORT
 }
 
 export type SingleAppPanelState = {

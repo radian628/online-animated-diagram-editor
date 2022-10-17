@@ -36,11 +36,26 @@ function App() {
           },
         ]
       },
+
       {
-        type: PanelType.SINGLE,
-        key: "1",
-        panel: { type: SinglePanelType.FILE_EDITOR },
-        size: 200
+        type: PanelType.MULTIPLE,
+        key: "0",
+        size: 400,
+        direction: PanelDirection.HORIZONTAL,
+        children: [
+          {
+            type: PanelType.SINGLE,
+            key: "6",
+            panel: { type: SinglePanelType.FILE_EDITOR },
+            size: 200
+          },
+          {
+            type: PanelType.SINGLE,
+            key: "7",
+            panel: { type: SinglePanelType.CLIP_EDITOR },
+            size: 200
+          },
+        ]
       },
     ],
     size: 600,
