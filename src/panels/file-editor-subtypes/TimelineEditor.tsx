@@ -28,6 +28,8 @@ export function TimelineClip(props: {
   let [temporaryClipYDelta, setTemporaryClipYDelta] = useState(0);
   let [previousTrack, setPreviousTrack] = useState(0);
 
+  let [currentlyEditingClip, setOnEditClip, editClip] =
+    useAppStore(state => [state.currentlyEditingClip, state.setOnEditClip, state.editClip]);
   
   useEffect(() => {
     if (isMouseDown) {
@@ -41,7 +43,7 @@ export function TimelineClip(props: {
         let deltaX = e.movementX / props.trackWidth * range;
         deltaX = Math.max(props.clip.start + deltaX, 0) - props.clip.start;
         let deltaY = e.movementY / 50 + temporaryClipYDelta;
-        props.setClip({
+        editClip({
           ...props.clip,
           start: props.clip.start + deltaX,
           end: props.clip.end + deltaX,
@@ -68,13 +70,20 @@ export function TimelineClip(props: {
       willChange: "transform"
     }}
     className="clip"
+    onMouseDown={e => {
+      if (e.button == 0) {
+        setOnEditClip(props.clip, clip => {
+          props.setClip(clip);
+        });
+      }
+    }}
   >
     <ResizeSeparator
       direction={PanelDirection.HORIZONTAL}
       onMove={e => {
         let newStart = props.clip.start + e / props.trackWidth * range;
         newStart = Math.min(newStart, props.clip.end);
-        props.setClip({
+        editClip({
           ...props.clip,
           start: newStart
         });
@@ -98,7 +107,7 @@ export function TimelineClip(props: {
       onMove={e => {
         let newEnd = props.clip.end + e / props.trackWidth * range;
         newEnd = Math.max(props.clip.start, newEnd);
-        props.setClip({
+        editClip({
           ...props.clip,
           end: newEnd
         });
@@ -181,7 +190,7 @@ export function TimelineNumbers(props: {
 
 
 export function TimelineEditor(props: { uuid: string }) {
-  console.log("Rerendering entire timeline. This should not happen very often.");
+  //console.log("Rerendering entire timeline. This should not happen very often.");
   const [files, setFile, setCurrentTimelineTime] = 
     useAppStore(state => [state.state.files, state.setFile, state.setCurrentTimelineTime]);
   const file = files[props.uuid];

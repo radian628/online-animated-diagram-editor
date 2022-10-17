@@ -1,4 +1,4 @@
-import { AppState } from "./State"
+import { AppState, Timeline } from "./State"
 
 export type DrawFunctionArgs = {
   ctx: CanvasRenderingContext2D, // canvas context for drawing custom stuff
@@ -41,5 +41,11 @@ export type RuntimeAppState = {
   currentTimelineTime: number,
   setCurrentTimelineTime: (time: number) => void
   currentDisplayTimelineUUID: string,
-  setCurrentDisplayTimelineUUID: (uuid: string) => void
+  setCurrentDisplayTimelineUUID: (uuid: string) => void,
+
+  // use this instead of onEditClip for clip editing because it auto-syncs.
+  editClip: (newClip: Timeline["timeline"][number]) => void,
+  onEditClip: (newClip: Timeline["timeline"][number]) => void,
+  currentlyEditingClip?: Timeline["timeline"][number],
+  setOnEditClip: (currentClipUUID: Timeline["timeline"][number], callback: (newClip: Timeline["timeline"][number]) => void) => void
 }

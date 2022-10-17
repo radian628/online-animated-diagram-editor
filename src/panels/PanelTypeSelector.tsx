@@ -16,5 +16,6 @@ export function PanelTypeSelector(props: {
     <option value={SinglePanelType.FILE_EDITOR}>File Editor</option>
     <option value={SinglePanelType.FILE_EXPLORER}>File Explorer</option>
     <option value={SinglePanelType.DISPLAY}>Display</option>
+    <option value={SinglePanelType.CLIP_EDITOR}>Clip Editor</option>
   </select>
 }

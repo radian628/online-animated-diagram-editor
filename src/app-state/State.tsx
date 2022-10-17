@@ -25,7 +25,12 @@ export const TimelineParser = z.object({
     start: z.number(),
     end: z.number(),
     track: z.number().refine(x => Math.round(x) == x),
-    drawableID: z.string()
+    drawableID: z.string(),
+    settings: z.record(z.union([
+      z.number(),
+      z.string()
+    ])),
+    uuid: z.string()
   }))
 });
 export type Timeline = z.infer<typeof TimelineParser>;

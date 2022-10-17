@@ -1,6 +1,7 @@
 import create from "zustand";
 import { RuntimeAppState, DrawFunction } from "./RuntimeState";
 import { AppStateParser } from "./State";
+import { v4 as uuidv4 } from "uuid";
 
 export const useAppStore = create<RuntimeAppState>((set, get) => ({
   state: {
@@ -23,7 +24,7 @@ export const useAppStore = create<RuntimeAppState>((set, get) => ({
         type: "application/prs.diagram",
         data: JSON.stringify({
           type: "js",
-          onUpdate: "ctx.fillText('hello world', width/2, height/2);",
+          onUpdate: "ctx.fillText(textContent, width/2, height/2);",
           onFixedUpdate: "",
           fixedRefreshRate: 60,
           settings: [
@@ -45,13 +46,17 @@ export const useAppStore = create<RuntimeAppState>((set, get) => ({
               start: 0,
               end: 1,
               drawableID: "c",
-              track: 0
+              track: 0,
+              settings: {},
+              uuid: uuidv4()
             },
             {
               start: 4,
               end: 5,
               drawableID: "c",
-              track: 0
+              track: 0,
+              settings: {},
+              uuid: uuidv4()
             }
           ]
         }),
@@ -115,4 +120,19 @@ export const useAppStore = create<RuntimeAppState>((set, get) => ({
   setCurrentDisplayTimelineUUID: (uuid: string) => {
     set({ currentDisplayTimelineUUID: uuid });
   },
+
+  editClip: (newClip) => {
+    get().onEditClip(newClip);
+    set({
+      currentlyEditingClip: newClip
+    });
+  },
+  onEditClip: (newClip) => {},
+  currentlyEditingClip: undefined,
+  setOnEditClip: (clip, callback) => {
+    set({
+      onEditClip: callback,
+      currentlyEditingClip: clip
+    });
+  }
 }));
