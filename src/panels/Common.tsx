@@ -4,6 +4,11 @@ import { v4 as uuidv4 } from "uuid";
 import { PanelDirection } from "../AppPanel";
 import useResizeObserver from "@react-hook/resize-observer";
 
+export function noUndefined<T>(obj: T): { [K in keyof T]: Exclude<T[K], undefined> } {
+  //@ts-ignore
+  return Object.fromEntries(Object.entries(obj).filter(([k, v]) => v !== undefined));
+}
+
 export function removeAttribs<T, K extends (keyof T)[]>(obj: T, ...props: K): Omit<T, K[number]> {
   let objCopy = { ...obj };
   for (let key of props) {

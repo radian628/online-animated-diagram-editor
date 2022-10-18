@@ -259,7 +259,7 @@ export function AppPanel(props: {
             <div>
               {props.onDelete ? 
               <Helpable
-                message="Press this button to delete the given panel."
+                message="Press this button to delete the given panel. You will have to re-open the panel and whatever was inside it, but anything inside will still be saved."
               >
                 <button onClick={props.onDelete} className="close-panel-button"><IoClose></IoClose></button> 
               </Helpable>

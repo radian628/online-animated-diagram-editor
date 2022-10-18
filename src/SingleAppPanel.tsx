@@ -4,6 +4,7 @@ import { FileExplorer } from "./panels/FileExplorer"
 import { Help } from "./panels/Help"
 import { Undecided } from "./panels/Undecided"
 import { ClipEditor } from "./panels/clip-editor/ClipEditor"
+import { SaveStates } from "./panels/save-states/SaveStates"
 
 export enum SinglePanelType {
   UNDECIDED, 
@@ -13,7 +14,8 @@ export enum SinglePanelType {
   DISPLAY,
   HELP,
   CLIP_EDITOR,
-  EXPORT
+  EXPORT,
+  SAVE_STATES
 }
 
 export type SingleAppPanelState = {
@@ -38,6 +40,8 @@ export function SingleAppPanel(props: {
       return <Help setIsActive={props.setIsActive} isActive={props.isActive}></Help>
     case SinglePanelType.CLIP_EDITOR:
       return <ClipEditor></ClipEditor>
+    case SinglePanelType.SAVE_STATES:
+      return <SaveStates></SaveStates>
     default:
       return <p>Error: This panel type is unimplemented!</p>
   }

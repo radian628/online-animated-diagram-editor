@@ -44,7 +44,7 @@ export function FileExplorer() {
     <Helpable
       message={
         <React.Fragment>
-          <p>Only show files which have all the tags listed here.</p>,
+          <p>Only show files which have all the tags listed here. Tags are used to categorize files instead of folders, so be sure to use them like folders.</p>,
           <ul>
             <li>Tags should be comma-separated</li>
             <li>Leading or trailing spaces in a tag name are ignored.</li>

@@ -47,5 +47,9 @@ export type RuntimeAppState = {
   editClip: (newClip: Timeline["timeline"][number]) => void,
   onEditClip: (newClip: Timeline["timeline"][number]) => void,
   currentlyEditingClip?: Timeline["timeline"][number],
-  setOnEditClip: (currentClipUUID: Timeline["timeline"][number], callback: (newClip: Timeline["timeline"][number]) => void) => void
+  setOnEditClip: (currentClipUUID: Timeline["timeline"][number], callback: (newClip: Timeline["timeline"][number]) => void) => void,
+
+  addSaveState: (name: string) => void,
+  loadSaveState: (name: string) => void,
+  deleteSaveState: (name: string) => void
 }

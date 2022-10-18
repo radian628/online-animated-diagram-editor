@@ -18,5 +18,6 @@ export function PanelTypeSelector(props: {
     <option value={SinglePanelType.DISPLAY}>Display</option>
     <option value={SinglePanelType.CLIP_EDITOR}>Clip Editor</option>
     <option value={SinglePanelType.EXPORT}>Export</option>
+    <option value={SinglePanelType.SAVE_STATES}>Save States</option>
   </select>
 }

@@ -2,9 +2,11 @@ import create from "zustand";
 import { RuntimeAppState, DrawFunction } from "./RuntimeState";
 import { AppStateParser } from "./State";
 import { v4 as uuidv4 } from "uuid";
+import { noUndefined } from "../panels/Common";
 
 export const useAppStore = create<RuntimeAppState>((set, get) => ({
   state: {
+    saveStates: {},
     rootDrawableID: "",
     files: {
       a: {
@@ -141,5 +143,29 @@ ctx.fillText(textContent, x, y);`,
       onEditClip: callback,
       currentlyEditingClip: clip
     });
+  },
+
+  addSaveState: (name: string) => {
+    set({
+      state: {
+        ...get().state,
+        saveStates: {
+          ...get().state.saveStates,
+          [name]: noUndefined({ ...get().state, saveStates: undefined })
+        }
+      }
+    })
+  },
+  loadSaveState: (name: string) => {
+    const saveState = get().state.saveStates[name];
+    if (!saveState) return;
+    set({ state: { ...saveState, saveStates: get().state.saveStates } });
+  },
+  deleteSaveState: (name: string) => {
+    set({
+      state: { ...get().state, saveStates: noUndefined({
+        ...get().state.saveStates, [name]: undefined
+      }) }
+    })
   }
 }));

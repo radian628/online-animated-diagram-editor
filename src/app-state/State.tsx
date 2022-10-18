@@ -9,14 +9,20 @@ export const FileParser = z.object({
 });
 export type File = z.infer<typeof FileParser>;
 
-export const AppStateParser = z.object({
+export const AppStateInnerParser = z.object({
   rootDrawableID: z.string(),
   files: z.record(FileParser),
   tags: z.record(z.object({
     name: z.string(),
     color: z.string()
-  }))
+  })),
 });
+export const AppStateParser = z.intersection(
+  AppStateInnerParser,
+  z.object({
+    saveStates: z.record(AppStateInnerParser)
+  })
+);
 export type AppState = z.infer<typeof AppStateParser>;
 
 export const TimelineParser = z.object({
