@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useAppStore } from "../app-state/StateManager";
 import { v4 as uuidv4 } from "uuid";
 import { PanelDirection } from "../AppPanel";
+import useResizeObserver from "@react-hook/resize-observer";
 
 export function removeAttribs<T, K extends (keyof T)[]>(obj: T, ...props: K): Omit<T, K[number]> {
   let objCopy = { ...obj };
@@ -116,14 +117,18 @@ export function useElemSize<T extends HTMLElement>() {
       const rect = ref.current?.getBoundingClientRect() ?? null;
       setRect(rect);
     }
+  }, [rect]);
+
+  useEffect(() => {
     if (!ref.current) return;
     const observer = new ResizeObserver(() => {
       const rect = ref.current?.getBoundingClientRect() ?? null;
       setRect(rect);
+      console.log("asdasdasdasd")
     });
     observer.observe(ref.current);
     return () => observer.disconnect();
-  });
+  }, []);
 
 
   return [ref,rect] as const;
@@ -259,4 +264,36 @@ export function useAnimationFrame<T extends readonly any[]>(
   return () => {
     setTimeElapsedOffset(timeElapsed.current);
   }
+}
+
+
+export let mousePos: [number, number] = [0, 0];
+document.addEventListener("mousemove", e => {
+  mousePos = [e.clientX, e.clientY];
+});
+
+
+
+export function useCache<T>(value2: T) {
+  const [value, setValue] = useState(value2);
+
+  useEffect(() => {
+    if (value != value2) {
+      setValue(value2);
+    }
+  });
+  return value;
+}
+
+
+export const useSize = (target: React.MutableRefObject<HTMLElement | null>  ) => {
+  const [size, setSize] = React.useState<DOMRect | undefined>()
+
+  React.useLayoutEffect(() => {
+    if (target.current) setSize(target.current.getBoundingClientRect())
+  }, [target])
+
+  // Where the magic happens
+  useResizeObserver(target, (entry) => setSize(entry.contentRect))
+  return size
 }

@@ -1,3 +1,4 @@
+import React from "react";
 import { useState } from "react";
 import { useAppStore } from "../app-state/StateManager";
 import { Helpable, StringInput } from "./Common";
@@ -42,11 +43,13 @@ export function FileExplorer() {
     
     <Helpable
       message={
-        [<p>Only show files which have all the tags listed here.</p>,
-        <ul>
-          <li>Tags should be comma-separated</li>
-          <li>Leading or trailing spaces in a tag name are ignored.</li>
-        </ul>]
+        <React.Fragment>
+          <p>Only show files which have all the tags listed here.</p>,
+          <ul>
+            <li>Tags should be comma-separated</li>
+            <li>Leading or trailing spaces in a tag name are ignored.</li>
+          </ul>
+        </React.Fragment>
       }
     >
       <label>Tags (comma-separated)</label>

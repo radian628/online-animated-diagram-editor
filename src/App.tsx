@@ -4,6 +4,7 @@ import './App.css'
 import { AppPanel, Panel, PanelDirection, PanelType } from './AppPanel';
 import { HelpNotifier } from './HelpNotifier';
 import { SinglePanelType } from './SingleAppPanel';
+import {v4 as uuidv4} from "uuid"
 
 function App() {
   const [data, setData] = useState<Panel>({
@@ -12,25 +13,25 @@ function App() {
     children: [
       {
         type: PanelType.MULTIPLE,
-        key: "0",
+        key: uuidv4(),
         size: 400,
         direction: PanelDirection.HORIZONTAL,
         children: [
           {
             type: PanelType.SINGLE,
-            key: "0",
+            key: uuidv4(),
             panel: { type: SinglePanelType.FILE_EXPLORER },
             size: 200
           },
           {
             type: PanelType.SINGLE,
-            key: "1",
+            key: uuidv4(),
             panel: { type: SinglePanelType.DISPLAY },
             size: 200
           },
           {
             type: PanelType.SINGLE,
-            key: "2",
+            key: uuidv4(),
             panel: { type: SinglePanelType.FILE_EDITOR },
             size: 200
           },
@@ -39,19 +40,19 @@ function App() {
 
       {
         type: PanelType.MULTIPLE,
-        key: "0",
+        key: uuidv4(),
         size: 400,
         direction: PanelDirection.HORIZONTAL,
         children: [
           {
             type: PanelType.SINGLE,
-            key: "6",
+            key: uuidv4(),
             panel: { type: SinglePanelType.FILE_EDITOR },
             size: 200
           },
           {
             type: PanelType.SINGLE,
-            key: "7",
+            key: uuidv4(),
             panel: { type: SinglePanelType.CLIP_EDITOR },
             size: 200
           },
@@ -59,7 +60,7 @@ function App() {
       },
     ],
     size: 600,
-    key: "0"
+    key: uuidv4()
   })
 
 

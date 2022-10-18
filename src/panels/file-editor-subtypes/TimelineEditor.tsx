@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useEffect, useState } from "react";
 import { IoPause, IoPlay } from "react-icons/io5";
 import { AppState, Timeline, TimelineParser } from "../../app-state/State";
 import { useAppStore } from "../../app-state/StateManager";
 import { PanelDirection } from "../../AppPanel";
-import { arraySet, ResizeSeparator, useAnimationFrame, useElemSize, useMouseDown } from "../Common";
+import { arraySet, mousePos, ResizeSeparator, useAnimationFrame, useCache, useElemSize, useMouseDown, useSize } from "../Common";
+import useResizeObserver from "@react-hook/resize-observer";
 
 import "./TimelineEditor.css";
 
@@ -145,8 +146,9 @@ export function TimelineNumbers(props: {
   parentLeft?: number,
   timelineDuration: number,
 }) {
-
-  const [ref, rect] = useElemSize<HTMLDivElement>();
+  const ref = useRef<HTMLDivElement>(null);
+  
+  const rect = useSize(ref);
 
   const isMouseDown = useMouseDown(ref, changeTime, true);
 
@@ -164,6 +166,7 @@ export function TimelineNumbers(props: {
     step = 10 ** Math.floor(Math.log10(step / 3.5));
     for (let i = Math.floor(props.start / step) * step; i < props.end; i += step) {
       numbers.push(<TimelineTime
+        key={i} 
         time={i}
         style={{
           position: "absolute",
@@ -190,7 +193,6 @@ export function TimelineNumbers(props: {
 
 
 export function TimelineEditor(props: { uuid: string }) {
-  //console.log("Rerendering entire timeline. This should not happen very often.");
   const [files, setFile, setCurrentTimelineTime] = 
     useAppStore(state => [state.state.files, state.setFile, state.setCurrentTimelineTime]);
   const file = files[props.uuid];
@@ -208,11 +210,13 @@ export function TimelineEditor(props: { uuid: string }) {
       return <p>Error: File claims to be a Timeline but is in the wrong format.</p>
   }
   const parsedFile = maybeParsedFile.data;
-
-  const [mousePos, setMousePos] = useState<[number, number]>([0, 0]);
-
-  const [timelineEditorRef, timelineEditorRect] = useElemSize<HTMLDivElement>();
-
+  const timelineEditorRef = React.useRef<HTMLDivElement>(null);
+  // const [timelineEditorRef, timelineEditorRect] = useElemSize<HTMLDivElement>();
+  const timelineEditorRect = useSize(timelineEditorRef);
+  const rectTop = useCache(timelineEditorRect?.top);
+  const rectWidth = useCache(timelineEditorRect?.width);
+  console.log(rectWidth);
+  
   const [currentTime, setCurrentTime] = useState(0);
 
   const timelinePixelHeight = (parsedFile.timeline
@@ -263,7 +267,6 @@ export function TimelineEditor(props: { uuid: string }) {
         }px`
       }}
       onMouseMove={e => {
-        setMousePos([e.clientX, e.clientY]);
       }}
       onKeyDown={e => {
 
@@ -305,8 +308,9 @@ export function TimelineEditor(props: { uuid: string }) {
       ></TimelineNumbers>
       {parsedFile.timeline.map((clip, i) => {
         return <TimelineClip
-          trackWidth={timelineEditorRect?.width ?? 1000}
-          trackYOffset={timelineEditorRect?.top ?? 0}
+          key={clip.uuid}
+          trackWidth={rectWidth ?? 1000}
+          trackYOffset={rectTop ?? 0}
           clip={clip}
           range={range}
           files={files}
@@ -322,7 +326,7 @@ export function TimelineEditor(props: { uuid: string }) {
         borderRight: "1px solid black",
         position: "absolute",
         top: "0px",
-        left: `${currentTime / range * (timelineEditorRect?.width ?? 0)}px`,
+        left: `${currentTime / range * (rectWidth ?? 0)}px`,
         height: `${timelinePixelHeight}px`,
         zIndex: 1000
       }}></div>

@@ -65,6 +65,7 @@ export function ClipEditor() {
             switch (setting.type) {
                 case "string":
                     return <StringSetting
+                        key={setting.varName}
                         val={
                             (typeof currentlyEditingClip.settings[setting.varName] == "string") 
                             ? (currentlyEditingClip.settings[setting.varName] as string) : ""
@@ -74,6 +75,7 @@ export function ClipEditor() {
                     ></StringSetting>;
                 case "number":
                     return <NumberSetting
+                        key={setting.varName}
                         val={
                             (typeof currentlyEditingClip.settings[setting.varName] == "number") 
                             ? (currentlyEditingClip.settings[setting.varName] as number) : 0
