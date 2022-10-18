@@ -167,5 +167,19 @@ ctx.fillText(textContent, x, y);`,
         ...get().state.saveStates, [name]: undefined
       }) }
     })
+  },
+
+  createNewFile: (name, data, type) => {
+    set({
+      state: {
+        ...get().state,
+        files: {
+          ...get().state.files,
+          [uuidv4()]: {
+            name, data, type, tags: []
+          }
+        }
+      } 
+    });
   }
 }));

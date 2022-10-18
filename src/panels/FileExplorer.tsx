@@ -20,8 +20,8 @@ export function FileExplorer() {
   const [fileNameFilter, setFileNameFilter] = useState("");
   const [tagsFilter, setTagsFilter] = useState("");
   
-  const [files, setCurrentlyLoadedFileUUID] = useAppStore(
-    state => [state.state.files, state.setCurrentlyLoadedFileUUID]
+  const [files, setCurrentlyLoadedFileUUID, createNewFile] = useAppStore(
+    state => [state.state.files, state.setCurrentlyLoadedFileUUID, state.createNewFile]
   );
 
   const searchTags = tagsFilter
@@ -44,7 +44,7 @@ export function FileExplorer() {
     <Helpable
       message={
         <React.Fragment>
-          <p>Only show files which have all the tags listed here. Tags are used to categorize files instead of folders, so be sure to use them like folders.</p>,
+          <p>Only show files which have all the tags listed here. Tags are useful for categorizing files, so you don't have to sift through all of them at once.</p>,
           <ul>
             <li>Tags should be comma-separated</li>
             <li>Leading or trailing spaces in a tag name are ignored.</li>
@@ -55,6 +55,18 @@ export function FileExplorer() {
       <label>Tags (comma-separated)</label>
       <StringInput val={tagsFilter} setVal={setTagsFilter}></StringInput>
     </Helpable>
+    <h2>Create</h2>
+    <button
+      onClick={() => {
+        createNewFile("New Diagram Component", JSON.stringify({
+          type: "js",
+          onUpdate: "",
+          onFixedUpdate: "",
+          fixedRefreshRate: 60,
+          settings: []
+        }), "application/prs.diagram");
+      }}
+    >New Diagram Component</button>
 
     <h2>Files</h2>
     <table>
