@@ -1,12 +1,14 @@
 import { useState } from 'react'
-import { useAppStore } from './app-state/StateManager';
+import { loadFromLocalStorage, useAppStore } from './app-state/StateManager';
 import './App.css'
 import { AppPanel, Panel, PanelDirection, PanelType } from './AppPanel';
 import { HelpNotifier } from './HelpNotifier';
 import { SinglePanelType } from './SingleAppPanel';
 import {v4 as uuidv4} from "uuid"
 
+
 function App() {
+
   const [data, setData] = useState<Panel>({
     type: PanelType.MULTIPLE,
     direction: PanelDirection.VERTICAL,
@@ -37,7 +39,7 @@ function App() {
           },
         ]
       },
-
+  
       {
         type: PanelType.MULTIPLE,
         key: uuidv4(),
@@ -61,7 +63,7 @@ function App() {
     ],
     size: 600,
     key: uuidv4()
-  })
+  });
 
 
   return (

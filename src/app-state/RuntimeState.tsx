@@ -51,5 +51,8 @@ export type RuntimeAppState = {
 
   addSaveState: (name: string) => void,
   loadSaveState: (name: string) => void,
-  deleteSaveState: (name: string) => void
+  deleteSaveState: (name: string) => void,
+
+  isExporting: boolean,
+  export: () => void
 }

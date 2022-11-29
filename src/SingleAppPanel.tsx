@@ -5,6 +5,7 @@ import { Help } from "./panels/Help"
 import { Undecided } from "./panels/Undecided"
 import { ClipEditor } from "./panels/clip-editor/ClipEditor"
 import { SaveStates } from "./panels/save-states/SaveStates"
+import { Export } from "./panels/export/Export"
 
 export enum SinglePanelType {
   UNDECIDED, 
@@ -43,6 +44,6 @@ export function SingleAppPanel(props: {
     case SinglePanelType.SAVE_STATES:
       return <SaveStates></SaveStates>
     default:
-      return <p>Error: This panel type is unimplemented!</p>
+      return <Export></Export>
   }
 }

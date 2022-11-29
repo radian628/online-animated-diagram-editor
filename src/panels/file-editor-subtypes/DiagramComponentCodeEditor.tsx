@@ -83,6 +83,7 @@ export function DiagramComponentCodeEditor(props: {
         if (!parsedFile) return;
         setFile(props.uuid, JSON.stringify({ ...parsedFile, onFixedUpdate: value }));
       }, [props.uuid, file]);
+
       
     const [key, setKey] = useState(1);
     useEffect(() => {
@@ -100,6 +101,9 @@ export function DiagramComponentCodeEditor(props: {
     }
     const parsedFile = maybeParsedFile.data;
 
+    const [perFrameLocalCopy, setPerFrameLocalCopy] = React.useState<string>(parsedFile.onUpdate);
+    const [fixedLocalCopy, setFixedLocalCopy] = React.useState<string>(parsedFile.onFixedUpdate);
+
     return <div>
         <h1>Editing '{file.name}'</h1>
         <h2>Settings</h2>
@@ -111,18 +115,28 @@ export function DiagramComponentCodeEditor(props: {
           }}
         ></SettingsEditor>
         <h2>Per-frame Update</h2>
+        <button
+          onClick={e => {
+            onPerFrameUpdateChange(perFrameLocalCopy);
+          }}
+        >Save & Recompile</button>
         <CodeMirror
           key={key}
-            value={parsedFile.onUpdate}
+            value={perFrameLocalCopy}
             extensions={[javascript()]}
-            onChange={onPerFrameUpdateChange}
+            onChange={setPerFrameLocalCopy}
         ></CodeMirror>
         <h2>Fixed Update</h2>
+        <button
+          onClick={e => {
+            onFixedUpdateChange(fixedLocalCopy);
+          }}
+        >Save & Recompile</button>
         <CodeMirror
           key={-key}
-            value={parsedFile.onFixedUpdate}
+            value={fixedLocalCopy}
             extensions={[javascript()]}
-            onChange={onFixedUpdateChange}
+            onChange={setFixedLocalCopy}
         ></CodeMirror>
     </div>
 }
