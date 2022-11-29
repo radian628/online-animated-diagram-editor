@@ -12,8 +12,6 @@ export function loadFromLocalStorage() {
   return localStorage.getItem("backup");
 }
 
-
-
 const defaultInitData = {
   saveStates: {},
   rootDrawableID: "",
@@ -22,13 +20,13 @@ const defaultInitData = {
       name: "testfile",
       type: "text/plain",
       data: "Contents of testfile",
-      tags: ["text"]
+      tags: ["text"],
     },
     b: {
       name: "test file 2",
       type: "text/plain",
       data: "Contents of test file 2.",
-      tags: ["text", "tag2"]
+      tags: ["text", "tag2"],
     },
     c: {
       name: "Text Component",
@@ -43,16 +41,16 @@ ctx.fillText(textContent, x, y);`,
         settings: [
           {
             type: "string",
-            varName: "textContent"
+            varName: "textContent",
           },
           { type: "number", varName: "x" },
           { type: "number", varName: "y" },
           { type: "number", varName: "fontSize" },
           { type: "string", varName: "fontType" },
           { type: "string", varName: "fontColor" },
-        ]
+        ],
       }),
-      tags: ["component"]
+      tags: ["component"],
     },
     d: {
       name: "Timeline",
@@ -66,7 +64,7 @@ ctx.fillText(textContent, x, y);`,
             drawableID: "c",
             track: 0,
             settings: {},
-            uuid: uuidv4()
+            uuid: uuidv4(),
           },
           {
             start: 4,
@@ -74,14 +72,14 @@ ctx.fillText(textContent, x, y);`,
             drawableID: "c",
             track: 0,
             settings: {},
-            uuid: uuidv4()
-          }
-        ]
+            uuid: uuidv4(),
+          },
+        ],
       }),
-      tags: []
-    }
+      tags: [],
+    },
   },
-  tags: {}
+  tags: {},
 };
 
 function getInitData() {
@@ -105,11 +103,13 @@ export const useAppStore = create<RuntimeAppState>((set, get) => ({
       let postSerializationState = JSON.parse(preSerializationState);
       let parsedAppState = AppStateParser.parse(postSerializationState);
 
-      set({
-        functionCache: new Map(),
-        state: parsedAppState,
-      }, true);
-
+      set(
+        {
+          functionCache: new Map(),
+          state: parsedAppState,
+        },
+        true
+      );
     } catch {
       window.alert("Failed to load project.");
     }
@@ -122,20 +122,29 @@ export const useAppStore = create<RuntimeAppState>((set, get) => ({
   },
 
   helpBoxMessage: "",
-  setHelpBoxMessage: message => {
-    set({helpBoxMessage: message});
+  setHelpBoxMessage: (message) => {
+    set({ helpBoxMessage: message });
   },
 
   helpNotifierData: null,
-  setHelpNotifierData: pos => {
+  setHelpNotifierData: (pos) => {
     set({ helpNotifierData: pos });
   },
 
   setFile: (id, contents) => {
     let oldState = get();
-    set({ state: { ...oldState.state, files: { ...oldState.state.files, [id]: {
-      ...oldState.state.files[id], data: contents
-    } } }})
+    set({
+      state: {
+        ...oldState.state,
+        files: {
+          ...oldState.state.files,
+          [id]: {
+            ...oldState.state.files[id],
+            data: contents,
+          },
+        },
+      },
+    });
     saveToLocalStorage(get().state);
   },
 
@@ -150,7 +159,7 @@ export const useAppStore = create<RuntimeAppState>((set, get) => ({
 
   currentTimelineTime: 0,
   setCurrentTimelineTime: (time: number) => {
-    set({ currentTimelineTime: time })
+    set({ currentTimelineTime: time });
   },
   currentDisplayTimelineUUID: "d",
   setCurrentDisplayTimelineUUID: (uuid: string) => {
@@ -160,7 +169,7 @@ export const useAppStore = create<RuntimeAppState>((set, get) => ({
   editClip: (newClip) => {
     get().onEditClip(newClip);
     set({
-      currentlyEditingClip: newClip
+      currentlyEditingClip: newClip,
     });
     saveToLocalStorage(get().state);
   },
@@ -169,7 +178,7 @@ export const useAppStore = create<RuntimeAppState>((set, get) => ({
   setOnEditClip: (clip, callback) => {
     set({
       onEditClip: callback,
-      currentlyEditingClip: clip
+      currentlyEditingClip: clip,
     });
     saveToLocalStorage(get().state);
   },
@@ -180,9 +189,9 @@ export const useAppStore = create<RuntimeAppState>((set, get) => ({
         ...get().state,
         saveStates: {
           ...get().state.saveStates,
-          [name]: noUndefined({ ...get().state, saveStates: undefined })
-        }
-      }
+          [name]: noUndefined({ ...get().state, saveStates: undefined }),
+        },
+      },
     });
     saveToLocalStorage(get().state);
   },
@@ -194,29 +203,19 @@ export const useAppStore = create<RuntimeAppState>((set, get) => ({
   },
   deleteSaveState: (name: string) => {
     set({
-      state: { ...get().state, saveStates: noUndefined({
-        ...get().state.saveStates, [name]: undefined
-      }) }
-    })
+      state: {
+        ...get().state,
+        saveStates: noUndefined({
+          ...get().state.saveStates,
+          [name]: undefined,
+        }),
+      },
+    });
     saveToLocalStorage(get().state);
   },
-
-  // createNewFile: (name, data, type) => {
-  //   set({
-  //     state: {
-  //       ...get().state,
-  //       files: {
-  //         ...get().state.files,
-  //         [uuidv4()]: {
-  //           name, data, type, tags: []
-  //         }
-  //       }
-  //     } 
-  //   });
-  // }
 
   isExporting: false,
   export: () => {
     set({ isExporting: true });
-  }
+  },
 }));

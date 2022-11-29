@@ -1,34 +1,47 @@
 import { DrawFunction, DrawFunctionArgs } from "../app-state/RuntimeState";
-import { AppState, DrawableParser, JSDrawable, JSDrawableParser, Timeline } from "../app-state/State";
+import {
+  AppState,
+  DrawableParser,
+  JSDrawable,
+  JSDrawableParser,
+  Timeline,
+} from "../app-state/State";
 
 type Zeroed<T> = { [K in keyof T]: 0 };
 
 type BuiltinParams = {
-  ctx: CanvasRenderingContext2D,
-  width: number,
-  height: number,
-  time: number,
-  duration: number
-}
-const builtinParamsKeys = keyify<BuiltinParams>({ctx:0,width:0,height:0,time:0,duration:0});
+  ctx: CanvasRenderingContext2D;
+  width: number;
+  height: number;
+  time: number;
+  duration: number;
+};
+const builtinParamsKeys = keyify<BuiltinParams>({
+  ctx: 0,
+  width: 0,
+  height: 0,
+  time: 0,
+  duration: 0,
+});
 
 type NonFixedAdditionalParams = {
-  fixed: (f: (fixed: any) => number | undefined) => number,
+  fixed: (f: (fixed: any) => number | undefined) => number;
   // fixedlerp: (f: (fixed: any) => number | undefined) => number,
   // fixedprev: any,
   // fixednext: any
 };
 const nonFixedAdditionalParamsKeys = keyify<NonFixedAdditionalParams>({
-  fixed:0,
+  fixed: 0,
   //fixedlerp:0,fixedprev:0,fixednext:0
 });
 
 type FixedAdditionalParams = {
-  prev: any,
-  next: (next: any) => void
-}
+  prev: any;
+  next: (next: any) => void;
+};
 const fixedAdditionalParamsKeys = keyify<FixedAdditionalParams>({
-  prev:0,next:0
+  prev: 0,
+  next: 0,
 });
 
 const contextlessBuiltinFunctions = {
@@ -60,7 +73,7 @@ const contextlessBuiltinFunctions = {
     return [
       a[1] * b[2] - a[2] * b[1],
       a[2] * b[0] - a[0] * b[2],
-      a[0] * b[1] - a[1] * b[0]
+      a[0] * b[1] - a[1] * b[0],
     ];
   },
 
@@ -69,79 +82,91 @@ const contextlessBuiltinFunctions = {
     if (!Array.isArray(a)) a = [a];
 
     if (Array.isArray(b)) {
-      if (a.length != b.length) throw new Error("Vector addition requires vectors of the same length!");
-
+      if (a.length != b.length)
+        throw new Error("Vector addition requires vectors of the same length!");
     } else {
-
     }
   },
   sub: () => {},
   mul: () => {},
   div: () => {},
 
-  lerp: (a: number, b: number, x: number) => (a + (b - a) * x),
-  smoothstep: (a: number, b: number, x: number) =>
-    x * x * (3 - 2 * x)
-}
+  lerp: (a: number, b: number, x: number) => a + (b - a) * x,
+  smoothstep: (a: number, b: number, x: number) => x * x * (3 - 2 * x),
+};
 
 function keyify<T>(t: Zeroed<T>) {
   return Object.keys(t);
 }
 
 export function createDrawFunction(drawable: JSDrawable): {
-  update: Function,
-  fixedUpdate: Function
+  update: Function;
+  fixedUpdate: Function;
 } {
-  
-  const createFnWithDefaultParams = <T extends string[]>(extraParams: T, src: string) => {
+  const createFnWithDefaultParams = <T extends string[]>(
+    extraParams: T,
+    src: string
+  ) => {
     const allParams: string[] = [
       // builtin params
       ...builtinParamsKeys,
       // any extra custom params
-      ...extraParams, 
+      ...extraParams,
       // settings
-      ...drawable.settings.map(s => s.varName)
-    ]
-    return new Function(`{${allParams.join(",")}}`,src);
-  }
-
+      ...drawable.settings.map((s) => s.varName),
+    ];
+    return new Function(`{${allParams.join(",")}}`, src);
+  };
 
   return {
-    update: createFnWithDefaultParams(nonFixedAdditionalParamsKeys, drawable.onUpdate),
-    fixedUpdate: createFnWithDefaultParams(fixedAdditionalParamsKeys, drawable.onFixedUpdate),
-  }
+    update: createFnWithDefaultParams(
+      nonFixedAdditionalParamsKeys,
+      drawable.onUpdate
+    ),
+    fixedUpdate: createFnWithDefaultParams(
+      fixedAdditionalParamsKeys,
+      drawable.onFixedUpdate
+    ),
+  };
 }
 
 export type DrawFunctionInvocationContext = {
-  fixedStateCache: any[], // state that persists between fixed timesteps
-  update: Function,
-  fixedUpdate: Function,
-  fixedUpdateFPS: number,
-  start: number,
-  end: number,
-  settings: Record<string, any>
-}
+  fixedStateCache: any[]; // state that persists between fixed timesteps
+  update: Function;
+  fixedUpdate: Function;
+  fixedUpdateFPS: number;
+  start: number;
+  end: number;
+  settings: Record<string, any>;
+};
 
 export type TimelineInvocationContext = {
-  drawFunctions: DrawFunctionInvocationContext[],
-  start: number,
-  end: number
-}
+  drawFunctions: DrawFunctionInvocationContext[];
+  start: number;
+  end: number;
+};
 
-export function drawTimeline(context: TimelineInvocationContext, canvas: HTMLCanvasElement, time: number) {
+export function drawTimeline(
+  context: TimelineInvocationContext,
+  canvas: HTMLCanvasElement,
+  time: number
+) {
   if (time > context.end || time < context.start) return;
   const localTime = time - context.start;
   for (const drawFnInvocation of context.drawFunctions) {
-    if (localTime >= drawFnInvocation.start && localTime <= drawFnInvocation.end) {
+    if (
+      localTime >= drawFnInvocation.start &&
+      localTime <= drawFnInvocation.end
+    ) {
       callDrawFunction(drawFnInvocation, canvas, localTime);
     }
   }
 }
 
 export function callDrawFunction(
-  context: DrawFunctionInvocationContext, 
+  context: DrawFunctionInvocationContext,
   canvas: HTMLCanvasElement,
-  currentTime: number,
+  currentTime: number
 ) {
   const ctx = canvas.getContext("2d");
   if (!ctx) throw new Error("Failed to create canvas context.");
@@ -151,7 +176,7 @@ export function callDrawFunction(
   const prevFrame = Math.floor(frame);
 
   while (context.fixedStateCache.length <= nextFrame) {
-    let calledNext = false
+    let calledNext = false;
     context.fixedUpdate({
       width: canvas.width,
       height: canvas.height,
@@ -166,7 +191,7 @@ export function callDrawFunction(
         }
       },
       prev: context.fixedStateCache[context.fixedStateCache.length - 1],
-      ...context.settings
+      ...context.settings,
     });
     if (!calledNext) {
       context.fixedStateCache.push(undefined);
@@ -178,15 +203,15 @@ export function callDrawFunction(
 
   const fixed = (f: (fixed: any) => any) => {
     const next = f(nextFixed);
-    if (typeof next != "number") throw new Error("Can only interpolate between numbers!");
+    if (typeof next != "number")
+      throw new Error("Can only interpolate between numbers!");
     const prev = f(prevFixed);
-    if (typeof prev != "number") throw new Error("Can only interpolate between numbers!");
+    if (typeof prev != "number")
+      throw new Error("Can only interpolate between numbers!");
     const x = frame % 1;
-    const factor =  x * x * (3 - 2 * x);
+    const factor = x * x * (3 - 2 * x);
     return prev + factor * (next - prev);
-  }
-
-
+  };
 
   context.update({
     ctx,
@@ -195,40 +220,38 @@ export function callDrawFunction(
     time: currentTime - context.start,
     duration: context.end - context.start,
     fixed,
-    ...context.settings
+    ...context.settings,
   });
 }
 
 export function createTimelineInvocationContext(
-  timeline: Timeline, 
-  start: number, 
+  timeline: Timeline,
+  start: number,
   end: number,
   files: AppState["files"]
 ): TimelineInvocationContext {
   return {
-    start, end,
-    drawFunctions: timeline.timeline
-      .map(item => {
-        const file = files[item.drawableID];
-        if (!file) {
-          throw new Error(`File '${file}' does not exist.`);
-        }
-        const maybeParsedFile = JSDrawableParser.safeParse(JSON.parse(file.data));
-        if (!maybeParsedFile.success) {
-          throw new Error(`File '${file}' is in the wrong format.`);
-        }
-        const parsedFile = maybeParsedFile.data;
-        const updateFunctions = createDrawFunction(parsedFile);
-        return {
-          ...updateFunctions,
-          start: item.start,
-          end: item.end,
-          fixedStateCache: [],
-          fixedUpdateFPS: parsedFile.fixedRefreshRate,
-          settings: item.settings
-        }
-      })
-  }
+    start,
+    end,
+    drawFunctions: timeline.timeline.map((item) => {
+      const file = files[item.drawableID];
+      if (!file) {
+        throw new Error(`File '${file}' does not exist.`);
+      }
+      const maybeParsedFile = JSDrawableParser.safeParse(JSON.parse(file.data));
+      if (!maybeParsedFile.success) {
+        throw new Error(`File '${file}' is in the wrong format.`);
+      }
+      const parsedFile = maybeParsedFile.data;
+      const updateFunctions = createDrawFunction(parsedFile);
+      return {
+        ...updateFunctions,
+        start: item.start,
+        end: item.end,
+        fixedStateCache: [],
+        fixedUpdateFPS: parsedFile.fixedRefreshRate,
+        settings: item.settings,
+      };
+    }),
+  };
 }
-
-

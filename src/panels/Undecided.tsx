@@ -1,3 +1,3 @@
 export function Undecided() {
-  return <p>Select a panel type.</p>
+  return <p>Select a panel type.</p>;
 }

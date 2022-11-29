@@ -10,7 +10,7 @@ body {
   flex-direction: column;
   font-family: sans-serif;
   font-size: 12px;
-} 
+}
 
 h2 {
   font-size: 16px;
@@ -78,7 +78,6 @@ input {
   outline: none;
 }
 
-
 .add-panel-button svg {
   margin-left: -5px;
 }
@@ -127,8 +126,6 @@ input {
   margin: -50%;
 }
 
-
-
 .resize-horizontal {
   width: 6px;
   margin-right: 0px;
@@ -162,11 +159,6 @@ input {
   background-color: #00000033;
 }
 
-
-
-
-
-
 .file-tag {
   border-radius: 5px;
   background-color: #aaaaaa;
@@ -177,9 +169,6 @@ input {
 .highlighted {
   background-color: yellow;
 }
-
-
-
 
 .helpable {
   display: inline;
@@ -224,7 +213,6 @@ input {
   background-color: #bbbbbb;
 }
 
-
 kbd {
   border-radius: 5px;
   background-color: black;
@@ -233,9 +221,6 @@ kbd {
   font-size: 12px;
   font-family: sans-serif;
 }
-
-
-
 
 .add-panel-direction-button {
   width: 100%;

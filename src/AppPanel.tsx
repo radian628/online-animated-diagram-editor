@@ -1,8 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { IoAdd, IoClose, IoCaretBack, IoCaretForward, IoCaretUp, IoCaretDown } from "react-icons/io5";
+import {
+  IoAdd,
+  IoClose,
+  IoCaretBack,
+  IoCaretForward,
+  IoCaretUp,
+  IoCaretDown,
+} from "react-icons/io5";
 import { Helpable, ResizeSeparator } from "./panels/Common";
 import { PanelTypeSelector } from "./panels/PanelTypeSelector";
-import { SingleAppPanel, SingleAppPanelState, SinglePanelType } from "./SingleAppPanel";
+import {
+  SingleAppPanel,
+  SingleAppPanelState,
+  SinglePanelType,
+} from "./SingleAppPanel";
 import { v4 as uuidv4 } from "uuid";
 import { AddPanelGrid } from "./AddPanelGrid";
 
@@ -13,12 +24,12 @@ export enum PanelDirection {
 
 export enum PanelType {
   SINGLE,
-  MULTIPLE
+  MULTIPLE,
 }
 
 export type Single = {
   type: PanelType.SINGLE;
-  panel: SingleAppPanelState
+  panel: SingleAppPanelState;
   key: string;
 };
 export type Multiple = {
@@ -28,10 +39,7 @@ export type Multiple = {
   key: string;
 };
 
-export type Panel = (
-  Single
-  | Multiple
-) & {
+export type Panel = (Single | Multiple) & {
   size: number;
 };
 
@@ -39,8 +47,6 @@ let counter = 5;
 function makeKey() {
   return "key" + counter++;
 }
-
-
 
 // Nestable app panel
 export function AppPanel(props: {
@@ -52,9 +58,8 @@ export function AppPanel(props: {
   onResize: (delta: number) => void;
   onDelete?: () => void;
   lastChild?: boolean;
-  onAddPanel?: (positive: boolean) => void
+  onAddPanel?: (positive: boolean) => void;
 }) {
-  
   const [isActive, setIsActive] = useState(false);
 
   // Is the "add a new panel" grid open?
@@ -73,15 +78,19 @@ export function AppPanel(props: {
   // keybind for adding a panel
   useEffect(() => {
     const keydown = (e: KeyboardEvent) => {
-      if (e.key == "n" && isPanelFocused && document.activeElement?.className == "app-panel-inner-single") {
+      if (
+        e.key == "n" &&
+        isPanelFocused &&
+        document.activeElement?.className == "app-panel-inner-single"
+      ) {
         setIsAdding(true);
       }
-    }
+    };
     document.addEventListener("keydown", keydown);
     return () => {
       document.removeEventListener("keydown", keydown);
-    }
-  })
+    };
+  });
 
   // determine inner content of the panels
   let inner;
@@ -89,7 +98,10 @@ export function AppPanel(props: {
 
   // case with multiple child panels
   if (props.data.type == PanelType.MULTIPLE) {
-    let totalChildSize = props.data.children.reduce((prev, cur) => prev + cur.size, 0);
+    let totalChildSize = props.data.children.reduce(
+      (prev, cur) => prev + cur.size,
+      0
+    );
 
     inner = (
       <div
@@ -98,45 +110,54 @@ export function AppPanel(props: {
           display: "grid",
           gridTemplateRows:
             props.data.direction == PanelDirection.VERTICAL
-              ? props.data.children.map((child) => `${child.size / totalChildSize * 2}fr`).join(" ")
+              ? props.data.children
+                  .map((child) => `${(child.size / totalChildSize) * 2}fr`)
+                  .join(" ")
               : undefined,
           gridTemplateColumns:
             props.data.direction == PanelDirection.HORIZONTAL
-              ? props.data.children.map((child) => `${child.size / totalChildSize * 2}fr`).join(" ")
+              ? props.data.children
+                  .map((child) => `${(child.size / totalChildSize) * 2}fr`)
+                  .join(" ")
               : undefined,
-          height: "100%"
+          height: "100%",
         }}
       >
-        
         {props.data.children.map((panel, i) => {
           if (props.data.type != PanelType.MULTIPLE) return undefined;
           return (
             <React.Fragment key={panel.key}>
               <AppPanel
-
                 onDelete={() => {
                   if (props.data.type != PanelType.MULTIPLE) return undefined;
                   props.setData({
                     ...props.data,
-                    children: props.data.children.filter((c, j) => j != i)
+                    children: props.data.children.filter((c, j) => j != i),
                   });
                 }}
-              
                 onResize={(delta) => {
                   if (props.data.type != PanelType.MULTIPLE) return undefined;
-                  let totalSize = props.data.children.reduce((prev, curr) => prev + curr.size, 0);
+                  let totalSize = props.data.children.reduce(
+                    (prev, curr) => prev + curr.size,
+                    0
+                  );
                   let rect = parentRef.current?.getBoundingClientRect();
                   if (!rect) return;
-                  let adjustedDelta = delta / ((props.data.direction == PanelDirection.VERTICAL) ? rect.height : rect.width) * totalSize;
+                  let adjustedDelta =
+                    (delta /
+                      (props.data.direction == PanelDirection.VERTICAL
+                        ? rect.height
+                        : rect.width)) *
+                    totalSize;
                   let newChildren = [...props.data.children];
                   newChildren[i].size += adjustedDelta;
-                  if (newChildren[i + 1]) newChildren[i + 1].size -= adjustedDelta;
+                  if (newChildren[i + 1])
+                    newChildren[i + 1].size -= adjustedDelta;
                   props.setData({
                     ...props.data,
                     children: newChildren,
                   });
                 }}
-
                 data={panel}
                 setData={(p) => {
                   if (props.data.type != PanelType.MULTIPLE) return undefined;
@@ -147,12 +168,9 @@ export function AppPanel(props: {
                     ),
                   });
                 }}
-
                 direction={props.data.direction}
-
                 lastChild={i == props.data.children.length - 1}
-
-                onAddPanel={positive => {
+                onAddPanel={(positive) => {
                   if (props.data.type != PanelType.MULTIPLE) return undefined;
                   let newChildren = [...props.data.children];
                   let newSize = panel.size / 2;
@@ -162,20 +180,20 @@ export function AppPanel(props: {
                       type: PanelType.SINGLE,
                       panel: { type: SinglePanelType.UNDECIDED },
                       size: newSize,
-                      key: makeKey()
+                      key: makeKey(),
                     });
                   } else {
                     newChildren.splice(i, 0, {
                       type: PanelType.SINGLE,
                       panel: { type: SinglePanelType.UNDECIDED },
                       size: newSize,
-                      key: makeKey()
+                      key: makeKey(),
                     });
                   }
                   props.setData({
                     ...props.data,
-                    children: newChildren
-                  })
+                    children: newChildren,
+                  });
                 }}
               ></AppPanel>
             </React.Fragment>
@@ -185,13 +203,13 @@ export function AppPanel(props: {
     );
   } else {
     inner = (
-      <div 
+      <div
         style={{ flexGrow: 1 }}
         tabIndex={0}
-        onFocus={e => {
+        onFocus={(e) => {
           setIsPanelFocused(true);
         }}
-        onBlur={e => {
+        onBlur={(e) => {
           setIsPanelFocused(false);
         }}
         className="app-panel-inner-single"
@@ -205,8 +223,6 @@ export function AppPanel(props: {
     );
   }
 
-
-
   return (
     <div
       style={{
@@ -216,11 +232,10 @@ export function AppPanel(props: {
         minHeight: 0,
         flexDirection:
           props.direction == PanelDirection.VERTICAL ? "column" : "row",
-        willChange: "transform"
+        willChange: "transform",
       }}
     >
-      {
-        isAdding ?
+      {isAdding ? (
         <AddPanelGrid
           onExit={() => setIsAdding(false)}
           onAddPanel={(direction, positive) => {
@@ -230,71 +245,94 @@ export function AppPanel(props: {
                 props.onAddPanel(positive);
               } else {
                 const oldPanel = { ...props.data, size: props.data.size / 2 };
-                const newPanel: Panel = { type: PanelType.SINGLE, panel: { type: SinglePanelType.UNDECIDED }, key: makeKey(), size: props.data.size / 2 };
+                const newPanel: Panel = {
+                  type: PanelType.SINGLE,
+                  panel: { type: SinglePanelType.UNDECIDED },
+                  key: makeKey(),
+                  size: props.data.size / 2,
+                };
                 props.setData({
                   type: PanelType.MULTIPLE,
                   size: props.data.size,
                   key: makeKey(),
-                  direction: (props.direction == PanelDirection.VERTICAL) ? PanelDirection.HORIZONTAL : PanelDirection.VERTICAL,
-                  children: positive ? [oldPanel, newPanel] : [newPanel, oldPanel] 
-                })
+                  direction:
+                    props.direction == PanelDirection.VERTICAL
+                      ? PanelDirection.HORIZONTAL
+                      : PanelDirection.VERTICAL,
+                  children: positive
+                    ? [oldPanel, newPanel]
+                    : [newPanel, oldPanel],
+                });
               }
             }
           }}
         ></AddPanelGrid>
-        : undefined }
-        <div
-          style={{
-            ...props.outerStyle,
-            flexGrow: 1
-          }}
-          ref={parentRef}
-          className={
-            props.data.type == PanelType.MULTIPLE
-              ? "app-panel-multiple app-panel"
-              : "app-panel-single app-panel" + (isActive ? " is-active-panel" : "")
-          }
-        >
-          {props.data.type == PanelType.MULTIPLE ? undefined : (
-            <div>
-              {props.onDelete ? 
-              <Helpable
-                message="Press this button to delete the given panel. You will have to re-open the panel and whatever was inside it if you want to use it later, but anything inside will still be saved."
-              >
-                <button onClick={props.onDelete} className="close-panel-button"><IoClose></IoClose></button> 
-              </Helpable>
-              : undefined}
-              <PanelTypeSelector
-                panelType={props.data.panel.type}
-                setPanelType={type => {
-                  if (props.data.type != PanelType.SINGLE) return;
-                  props.setData({
-                    ...props.data,
-                    panel: {
-                      ...props.data.panel,
-                      type
-                    }
-                  });
-                }}
-              ></PanelTypeSelector>
-
-              <Helpable
-                message={<p>Press this button to split this panel. This can also be done with the <kbd>N</kbd> key.</p>}
-              >       
-                <button onClick={() => {
-                  setIsAdding(true);
-                }} className="add-panel-button"><IoAdd></IoAdd></button>
-              </Helpable>
-            </div>
-          )}
-          {inner}
-        </div>
-      {props.lastChild ? undefined : <ResizeSeparator
-        onMove={(delta) => {
-          props.onResize(delta);
+      ) : undefined}
+      <div
+        style={{
+          ...props.outerStyle,
+          flexGrow: 1,
         }}
-        direction={props.direction}
-      ></ResizeSeparator> }
+        ref={parentRef}
+        className={
+          props.data.type == PanelType.MULTIPLE
+            ? "app-panel-multiple app-panel"
+            : "app-panel-single app-panel" +
+              (isActive ? " is-active-panel" : "")
+        }
+      >
+        {props.data.type == PanelType.MULTIPLE ? undefined : (
+          <div>
+            {props.onDelete ? (
+              <Helpable message="Press this button to delete the given panel. You will have to re-open the panel and whatever was inside it if you want to use it later, but anything inside will still be saved.">
+                <button onClick={props.onDelete} className="close-panel-button">
+                  <IoClose></IoClose>
+                </button>
+              </Helpable>
+            ) : undefined}
+            <PanelTypeSelector
+              panelType={props.data.panel.type}
+              setPanelType={(type) => {
+                if (props.data.type != PanelType.SINGLE) return;
+                props.setData({
+                  ...props.data,
+                  panel: {
+                    ...props.data.panel,
+                    type,
+                  },
+                });
+              }}
+            ></PanelTypeSelector>
+
+            <Helpable
+              message={
+                <p>
+                  Press this button to split this panel. This can also be done
+                  with the <kbd>N</kbd> key.
+                </p>
+              }
+            >
+              <button
+                onClick={() => {
+                  setIsAdding(true);
+                }}
+                className="add-panel-button"
+              >
+                <IoAdd></IoAdd>
+              </button>
+            </Helpable>
+          </div>
+        )}
+        {inner}
+      </div>
+      {props.lastChild ? undefined : (
+        <ResizeSeparator
+          onMove={(delta) => {
+            props.onResize(delta);
+          }}
+          direction={props.direction}
+        ></ResizeSeparator>
+      )}
     </div>
   );
 }

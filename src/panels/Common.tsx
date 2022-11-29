@@ -4,12 +4,19 @@ import { v4 as uuidv4 } from "uuid";
 import { PanelDirection } from "../AppPanel";
 import useResizeObserver from "@react-hook/resize-observer";
 
-export function noUndefined<T>(obj: T): { [K in keyof T]: Exclude<T[K], undefined> } {
+export function noUndefined<T>(obj: T): {
+  [K in keyof T]: Exclude<T[K], undefined>;
+} {
   //@ts-ignore
-  return Object.fromEntries(Object.entries(obj).filter(([k, v]) => v !== undefined));
+  return Object.fromEntries(
+    Object.entries(obj).filter(([k, v]) => v !== undefined)
+  );
 }
 
-export function removeAttribs<T, K extends (keyof T)[]>(obj: T, ...props: K): Omit<T, K[number]> {
+export function removeAttribs<T, K extends (keyof T)[]>(
+  obj: T,
+  ...props: K
+): Omit<T, K[number]> {
   let objCopy = { ...obj };
   for (let key of props) {
     delete objCopy[key];
@@ -17,43 +24,52 @@ export function removeAttribs<T, K extends (keyof T)[]>(obj: T, ...props: K): Om
   return objCopy;
 }
 
-export function StringInput(props: {
-  val: string,
-  setVal: (s: string) => void
-} & React.HTMLAttributes<HTMLInputElement>) {
-  return <input
-    {...removeAttribs(props, "val", "setVal")}
-    onInput={e => {
-      props.setVal(e.currentTarget.value);
-    }}
-    value={props.val}
-  ></input>
-}
-
-
-export function NumberInput(props: {
-  val: number,
-  setVal: (s: number) => void
-} & React.HTMLAttributes<HTMLInputElement>) {
-  return <input
-    {...removeAttribs(props, "val", "setVal")}
-    onInput={e => {
-      props.setVal(Number(e.currentTarget.value));
-    }}
-    value={props.val.toString()}
-  ></input>
-}
-
-export function Helpable(props: {
-  children: string | JSX.Element | JSX.Element[],
-  message: string | JSX.Element | JSX.Element[]
-} & React.HTMLAttributes<HTMLInputElement>) {
-  const [setHelpBoxMessage] = useAppStore(
-    state => [state.setHelpBoxMessage]
+export function StringInput(
+  props: {
+    val: string;
+    setVal: (s: string) => void;
+  } & React.HTMLAttributes<HTMLInputElement>
+) {
+  return (
+    <input
+      {...removeAttribs(props, "val", "setVal")}
+      onInput={(e) => {
+        props.setVal(e.currentTarget.value);
+      }}
+      value={props.val}
+    ></input>
   );
+}
 
-  const [helpNotifierData, setHelpNotifierData] = 
-    useAppStore(state => [state.helpNotifierData, state.setHelpNotifierData]);
+export function NumberInput(
+  props: {
+    val: number;
+    setVal: (s: number) => void;
+  } & React.HTMLAttributes<HTMLInputElement>
+) {
+  return (
+    <input
+      {...removeAttribs(props, "val", "setVal")}
+      onInput={(e) => {
+        props.setVal(Number(e.currentTarget.value));
+      }}
+      value={props.val.toString()}
+    ></input>
+  );
+}
+
+export function Helpable(
+  props: {
+    children: string | JSX.Element | JSX.Element[];
+    message: string | JSX.Element | JSX.Element[];
+  } & React.HTMLAttributes<HTMLInputElement>
+) {
+  const [setHelpBoxMessage] = useAppStore((state) => [state.setHelpBoxMessage]);
+
+  const [helpNotifierData, setHelpNotifierData] = useAppStore((state) => [
+    state.helpNotifierData,
+    state.setHelpNotifierData,
+  ]);
 
   const [isMouseOver, setIsMouseOver] = useState(false);
 
@@ -65,52 +81,60 @@ export function Helpable(props: {
       if (helpNotifierData && helpNotifierData.uuid == uuid) {
         setHelpNotifierData(null);
       }
-    }
+    };
   }, []);
 
   useEffect(() => {
     const keydown = (e: KeyboardEvent) => {
-      if (isMouseOver && e.key == "h" && (document.activeElement === document.body || document.activeElement?.tagName !== "INPUT")) {
+      if (
+        isMouseOver &&
+        e.key == "h" &&
+        (document.activeElement === document.body ||
+          document.activeElement?.tagName !== "INPUT")
+      ) {
         if (setHelpBoxMessage) setHelpBoxMessage(props.message);
       }
-    }
+    };
     document.addEventListener("keydown", keydown);
-    
+
     const mousemove = (e: MouseEvent) => {
       if (isMouseOver) {
-        setHelpNotifierData({ x: e.clientX, y: e.clientY, uuid, content: props.message });
+        setHelpNotifierData({
+          x: e.clientX,
+          y: e.clientY,
+          uuid,
+          content: props.message,
+        });
       } else if (helpNotifierData && helpNotifierData.uuid == uuid) {
         setHelpNotifierData(null);
       }
-    }
+    };
     document.addEventListener("mousemove", mousemove);
-    
+
     return () => {
       document.removeEventListener("keydown", keydown);
       document.removeEventListener("mousemove", mousemove);
-    }
-  })
+    };
+  });
 
-
-  return <div
-    {...removeAttribs(props, "children", "message")}
-    className="helpable"
-    onMouseOver={() => {
-      setIsMouseOver(true);
-    }}
-    onMouseOut={() => {
-      setIsMouseOver(false);
-    }}
-  >
-    {props.children}
-  </div>
+  return (
+    <div
+      {...removeAttribs(props, "children", "message")}
+      className="helpable"
+      onMouseOver={() => {
+        setIsMouseOver(true);
+      }}
+      onMouseOut={() => {
+        setIsMouseOver(false);
+      }}
+    >
+      {props.children}
+    </div>
+  );
 }
 
-
-
-
 export function arraySet<T>(arr: T[], i: number, newVal: T) {
-  return arr.map((e, j) => (i == j) ? newVal : e);
+  return arr.map((e, j) => (i == j ? newVal : e));
 }
 
 export function useElemSize<T extends HTMLElement>() {
@@ -129,19 +153,14 @@ export function useElemSize<T extends HTMLElement>() {
     const observer = new ResizeObserver(() => {
       const rect = ref.current?.getBoundingClientRect() ?? null;
       setRect(rect);
-      console.log("asdasdasdasd")
+      console.log("asdasdasdasd");
     });
     observer.observe(ref.current);
     return () => observer.disconnect();
   }, []);
 
-
-  return [ref,rect] as const;
+  return [ref, rect] as const;
 }
-
-
-
-
 
 let mouseX = 0;
 let mouseY = 0;
@@ -151,14 +170,11 @@ document.addEventListener("mousemove", (e) => {
   mouseY = e.clientY;
 });
 
-
-
 export function ResizeSeparator(props: {
   onMove: (delta: number) => void;
   direction: PanelDirection;
   isAtStart?: boolean;
 }) {
-
   useEffect(() => {
     const mousemove = (e: MouseEvent) => {
       if (isMouseDown) {
@@ -201,17 +217,22 @@ export function ResizeSeparator(props: {
           ? "resize-vertical"
           : "resize-horizontal"
       }`}
-      style={props.isAtStart ? {
-        left: "0"
-      } : {}}
+      style={
+        props.isAtStart
+          ? {
+              left: "0",
+            }
+          : {}
+      }
     ></div>
   );
 }
 
-
-
-
-export function useMouseDown(elemRef: React.RefObject<HTMLElement>, callback?: (e: MouseEvent) => void, appliesToChildren: boolean = true) {
+export function useMouseDown(
+  elemRef: React.RefObject<HTMLElement>,
+  callback?: (e: MouseEvent) => void,
+  appliesToChildren: boolean = true
+) {
   const [isMouseDown, setIsMouseDown] = useState(false);
 
   useEffect(() => {
@@ -219,11 +240,11 @@ export function useMouseDown(elemRef: React.RefObject<HTMLElement>, callback?: (
       if (!appliesToChildren && e.currentTarget !== e.target) return;
       if (callback) callback(e);
       setIsMouseDown(true);
-    }
+    };
 
     const mouseup = (e: MouseEvent) => {
       setIsMouseDown(false);
-    }
+    };
 
     if (!elemRef.current) return;
 
@@ -233,15 +254,12 @@ export function useMouseDown(elemRef: React.RefObject<HTMLElement>, callback?: (
     return () => {
       if (!elemRef.current) return;
       elemRef.current.removeEventListener("mousedown", mousedown);
-      document.removeEventListener("mouseup", mouseup);  
-    }
+      document.removeEventListener("mouseup", mouseup);
+    };
   }, []);
 
   return isMouseDown;
 }
-
-
-
 
 export function useAnimationFrame<T extends readonly any[]>(
   callback: (updatedState: T, time: number) => void,
@@ -257,9 +275,10 @@ export function useAnimationFrame<T extends readonly any[]>(
 
   const animate = (time: number) => {
     timeElapsed.current = time;
-    if (dependenciesRef.current) callback(dependenciesRef.current, time - timeElapsedOffset);
+    if (dependenciesRef.current)
+      callback(dependenciesRef.current, time - timeElapsedOffset);
     animationRef.current = requestAnimationFrame(animate);
-  }
+  };
 
   useEffect(() => {
     animationRef.current = requestAnimationFrame(animate);
@@ -268,16 +287,13 @@ export function useAnimationFrame<T extends readonly any[]>(
 
   return () => {
     setTimeElapsedOffset(timeElapsed.current);
-  }
+  };
 }
 
-
 export let mousePos: [number, number] = [0, 0];
-document.addEventListener("mousemove", e => {
+document.addEventListener("mousemove", (e) => {
   mousePos = [e.clientX, e.clientY];
 });
-
-
 
 export function useCache<T>(value2: T) {
   const [value, setValue] = useState(value2);
@@ -290,15 +306,14 @@ export function useCache<T>(value2: T) {
   return value;
 }
 
-
-export const useSize = (target: React.MutableRefObject<HTMLElement | null>  ) => {
-  const [size, setSize] = React.useState<DOMRect | undefined>()
+export const useSize = (target: React.MutableRefObject<HTMLElement | null>) => {
+  const [size, setSize] = React.useState<DOMRect | undefined>();
 
   React.useLayoutEffect(() => {
-    if (target.current) setSize(target.current.getBoundingClientRect())
-  }, [target])
+    if (target.current) setSize(target.current.getBoundingClientRect());
+  }, [target]);
 
   // Where the magic happens
-  useResizeObserver(target, (entry) => setSize(entry.contentRect))
-  return size
-}
+  useResizeObserver(target, (entry) => setSize(entry.contentRect));
+  return size;
+};

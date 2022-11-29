@@ -1,23 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import { v4 } from 'uuid';
-import { useAppStore } from '../app-state/StateManager';
-import { DiagramComponentCodeEditor } from './file-editor-subtypes/DiagramComponentCodeEditor';
+import React, { useEffect, useState } from "react";
+import { v4 } from "uuid";
+import { useAppStore } from "../app-state/StateManager";
+import { DiagramComponentCodeEditor } from "./file-editor-subtypes/DiagramComponentCodeEditor";
 import { DefaultCodeEditor } from "./file-editor-subtypes/DefaultCodeEditor";
-import { TimelineEditor } from './file-editor-subtypes/TimelineEditor';
+import { TimelineEditor } from "./file-editor-subtypes/TimelineEditor";
 
 export function CodeEditor(props: {
-  isActive: boolean,
-  setIsActive: (b: boolean) => void
+  isActive: boolean;
+  setIsActive: (b: boolean) => void;
 }) {
-
   const [
-    activeFileEditorUUID, setActiveFileEditorUUID, 
-    currentlyLoadedFileUUID, setCurrentlyLoadedFileUUID,
-    files
-  ] = useAppStore(state => [
-    state.activeFileEditorUUID, state.setActiveFileEditorUUID,
-    state.currentlyLoadedFileUUID, state.setCurrentlyLoadedFileUUID,
-    state.state.files
+    activeFileEditorUUID,
+    setActiveFileEditorUUID,
+    currentlyLoadedFileUUID,
+    setCurrentlyLoadedFileUUID,
+    files,
+  ] = useAppStore((state) => [
+    state.activeFileEditorUUID,
+    state.setActiveFileEditorUUID,
+    state.currentlyLoadedFileUUID,
+    state.setCurrentlyLoadedFileUUID,
+    state.state.files,
   ]);
 
   const [uuid] = useState(v4());
@@ -37,43 +40,47 @@ export function CodeEditor(props: {
       setIdOfFileBeingEdited(currentlyLoadedFileUUID);
     }
   }, [currentlyLoadedFileUUID]);
-  
+
   useEffect(() => {
     if (activeFileEditorUUID == uuid) {
       props.setIsActive(true);
     } else {
       props.setIsActive(false);
     }
-  }, [activeFileEditorUUID])
+  }, [activeFileEditorUUID]);
 
   let editor: JSX.Element = <p>Unable to open: Unknown file type.</p>;
   let file = files[idOfFileBeingEdited];
   if (file !== undefined) {
     switch (file.type) {
-    case "application/prs.diagram":
-      editor = <DiagramComponentCodeEditor
-        uuid={idOfFileBeingEdited}
-      ></DiagramComponentCodeEditor>
-      break;
-    case "application/prs.timeline":
-      editor = <TimelineEditor uuid={idOfFileBeingEdited}></TimelineEditor>
-      break;
-    default:
-      editor = <DefaultCodeEditor
-      uuid={idOfFileBeingEdited}
-      ></DefaultCodeEditor>
+      case "application/prs.diagram":
+        editor = (
+          <DiagramComponentCodeEditor
+            uuid={idOfFileBeingEdited}
+          ></DiagramComponentCodeEditor>
+        );
+        break;
+      case "application/prs.timeline":
+        editor = <TimelineEditor uuid={idOfFileBeingEdited}></TimelineEditor>;
+        break;
+      default:
+        editor = (
+          <DefaultCodeEditor uuid={idOfFileBeingEdited}></DefaultCodeEditor>
+        );
     }
   }
 
-  return <div
-    onClick={() => {
-      setActiveFileEditorUUID(uuid);
-    }}
-  >
-    {(idOfFileBeingEdited === "" ) 
-    ? 
-    <p>Open a file by clicking on it in the File Explorer panel.</p>
-    :
-    (editor as JSX.Element)}
-  </div>
+  return (
+    <div
+      onClick={() => {
+        setActiveFileEditorUUID(uuid);
+      }}
+    >
+      {idOfFileBeingEdited === "" ? (
+        <p>Open a file by clicking on it in the File Explorer panel.</p>
+      ) : (
+        (editor as JSX.Element)
+      )}
+    </div>
+  );
 }

@@ -3,60 +3,68 @@ import { useState } from "react";
 import { useAppStore } from "../app-state/StateManager";
 import { Helpable, StringInput } from "./Common";
 
-import "./FileExplorer.css"
+import "./FileExplorer.css";
 
-function zipper<A,B>(a: A[], b: (i: number) => B) {
-  return a.map((e, i) => (i == a.length - 1) ? [e] : [e, b(i)]).flat(1);
+function zipper<A, B>(a: A[], b: (i: number) => B) {
+  return a.map((e, i) => (i == a.length - 1 ? [e] : [e, b(i)])).flat(1);
 }
 
 const mimeTypeMap: Record<string, string> = {
   "text/plain": "Plaintext",
   "application/prs.diagram": "Diagram Component",
   "text/javascript": "JavaScript Source",
-  "application/prs.timeline": "Timeline"
-}
+  "application/prs.timeline": "Timeline",
+};
 
 export function FileExplorer() {
   const [fileNameFilter, setFileNameFilter] = useState("");
   const [tagsFilter, setTagsFilter] = useState("");
-  
-  const [files, setCurrentlyLoadedFileUUID, createNewFile] = useAppStore(
-    state => [state.state.files, state.setCurrentlyLoadedFileUUID, state.createNewFile]
-  );
+
+  const [files, setCurrentlyLoadedFileUUID] = useAppStore((state) => [
+    state.state.files,
+    state.setCurrentlyLoadedFileUUID,
+  ]);
 
   const searchTags = tagsFilter
     .split(",")
-    .map(s => s.replace(/^\s+|\s+$/g, "")) // no leading/trailing spaces
-    .filter(s => s); // no empty tags
+    .map((s) => s.replace(/^\s+|\s+$/g, "")) // no leading/trailing spaces
+    .filter((s) => s); // no empty tags
 
-  return <div>
-    <h2>Search</h2>
+  return (
+    <div>
+      <h2>Search</h2>
 
-    <Helpable
-      message="Only show files whose names contain the given text. Searching is case-sensitive."
-    >
-      <label>Name</label>
-      <StringInput val={fileNameFilter} setVal={setFileNameFilter}></StringInput>
-    </Helpable>
-    
-    <br></br>
-    
-    <Helpable
-      message={
-        <React.Fragment>
-          <p>Only show files which have all the tags listed here. Tags are useful for categorizing files, so you don't have to sift through all of them at once.</p>,
-          <ul>
-            <li>Tags should be comma-separated</li>
-            <li>Leading or trailing spaces in a tag name are ignored.</li>
-          </ul>
-        </React.Fragment>
-      }
-    >
-      <label>Tags (comma-separated)</label>
-      <StringInput val={tagsFilter} setVal={setTagsFilter}></StringInput>
-    </Helpable>
-    <h2>Create</h2>
-    <button
+      <Helpable message="Only show files whose names contain the given text. Searching is case-sensitive.">
+        <label>Name</label>
+        <StringInput
+          val={fileNameFilter}
+          setVal={setFileNameFilter}
+        ></StringInput>
+      </Helpable>
+
+      <br></br>
+
+      <Helpable
+        message={
+          <React.Fragment>
+            <p>
+              Only show files which have all the tags listed here. Tags are
+              useful for categorizing files, so you don't have to sift through
+              all of them at once.
+            </p>
+            ,
+            <ul>
+              <li>Tags should be comma-separated</li>
+              <li>Leading or trailing spaces in a tag name are ignored.</li>
+            </ul>
+          </React.Fragment>
+        }
+      >
+        <label>Tags (comma-separated)</label>
+        <StringInput val={tagsFilter} setVal={setTagsFilter}></StringInput>
+      </Helpable>
+      <h2>Create</h2>
+      {/* <button
       onClick={() => {
         createNewFile("New Diagram Component", JSON.stringify({
           type: "js",
@@ -66,20 +74,19 @@ export function FileExplorer() {
           settings: []
         }), "application/prs.diagram");
       }}
-    >New Diagram Component</button>
+    >New Diagram Component</button> */}
 
-    <h2>Files</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Tags</th>
-        </tr>
-      </thead>
-      <tbody>
-        {
-          Object.entries(files)
+      <h2>Files</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Tags</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Object.entries(files)
 
             // name match
             .filter(([id, file]) => file.name.indexOf(fileNameFilter) != -1)
@@ -94,31 +101,45 @@ export function FileExplorer() {
 
             // formatting
             .map(([id, file]) => {
-              return <tr
-                onClick={(e => {
-                  setCurrentlyLoadedFileUUID(id);
-                })}
-                className="file-explorer-file-info"
-                key={id}
-              >
+              return (
+                <tr
+                  onClick={(e) => {
+                    setCurrentlyLoadedFileUUID(id);
+                  }}
+                  className="file-explorer-file-info"
+                  key={id}
+                >
+                  <td>
+                    {fileNameFilter
+                      ? zipper(file.name.split(fileNameFilter), (i) => {
+                          return (
+                            <span key={i} className="highlighted">
+                              {fileNameFilter}
+                            </span>
+                          );
+                        })
+                      : file.name}
+                  </td>
 
-                <td>{fileNameFilter
-                  ? zipper(file.name.split(fileNameFilter), i => {
-                    return <span key={i} className="highlighted">{fileNameFilter}</span>
-                  })
-                  : file.name
-                }</td>
-                
-                <td>{mimeTypeMap[file.type] ?? `Unknown: ${file.type}`}</td>
+                  <td>{mimeTypeMap[file.type] ?? `Unknown: ${file.type}`}</td>
 
-                <td>{file.tags.map(tag => 
-                  <span className={`file-tag${searchTags.indexOf(tag) == -1 ? "" : " highlighted"}`} key={tag}>{tag}</span>)
-                }</td>
-
-              </tr>
-            })
-        }
-      </tbody>
-    </table>
-  </div>
+                  <td>
+                    {file.tags.map((tag) => (
+                      <span
+                        className={`file-tag${
+                          searchTags.indexOf(tag) == -1 ? "" : " highlighted"
+                        }`}
+                        key={tag}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </td>
+                </tr>
+              );
+            })}
+        </tbody>
+      </table>
+    </div>
+  );
 }

@@ -1,3 +1,1 @@
-export function* imageGenerator() {
-    
-}
+export function* imageGenerator() {}
